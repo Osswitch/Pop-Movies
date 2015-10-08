@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Pop Movies</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!--Sort order settings strings-->
+    <string name="pref_sort_title">Sort Order</string>
+    <string name="pref_sort_key">sort order</string>
+    
+    <string name="sort_entries_popularity">Popularity</string>
+    <string name="sort_entries_highestRate">Highest Rate</string>
+    <string name="sort_entryValue_popularity">popularity.desc</string>
+    <string name="sort_entryValue_highestRate">vote_average.desc</string>
+    
+    <string-array name="pref_sort_entries">
+        <item>@string/sort_entries_popularity</item>
+        <item>@string/sort_entries_highestRate</item>
+    </string-array>
+
+    <string-array name="pref_sort_entryValues">
+        <item>@string/sort_entryValue_popularity</item>
+        <item>@string/sort_entryValue_highestRate</item>
+    </string-array>
+
+    <string name="pref_sort_defValue">popularity.desc</string>
+
+    <!--Detail Activity-->
+    <string name="title_activity_movie_detail">MovieDetailActivity</string>
+</resources>
