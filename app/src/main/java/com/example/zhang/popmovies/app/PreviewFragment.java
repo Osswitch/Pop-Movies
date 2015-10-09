@@ -10,15 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.GridView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,8 +30,6 @@ import java.util.ArrayList;
 public class PreviewFragment extends Fragment {
 
     private PreviewAdapter mPreviewAdapter = null;
-
-    //private ArrayAdapter mPreviewAdapter;
 
     public PreviewFragment() {
     }
@@ -50,12 +46,12 @@ public class PreviewFragment extends Fragment {
 
         mPreviewAdapter = new PreviewAdapter(
                 getActivity(),
-                R.layout.list_item_preview,
-                new ArrayList<RowImages>()
+                R.layout.grid_item_preview,
+                new ArrayList<Uri>()
         );
 
-        ListView listView = (ListView) rootView.findViewById(R.id.listView_preview);
-        listView.setAdapter(mPreviewAdapter);
+        GridView gridView = (GridView) rootView.findViewById(R.id.gridView_preview);
+        gridView.setAdapter(mPreviewAdapter);
 
         return rootView;
     }
@@ -83,7 +79,7 @@ public class PreviewFragment extends Fragment {
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
-        private final String API_KEY_ADDRESS
+        /*private final String API_KEY_ADDRESS
                 = "/home/zhang/AndroidStudioProjects/PopMovies/API_KEY";
 
 
@@ -100,7 +96,7 @@ public class PreviewFragment extends Fragment {
                 Log.v(LOG_TAG, "API KEY READING ERROR", e);
             }
             return API_KEY;
-        }
+        }*/
 
 
 
@@ -122,6 +118,7 @@ public class PreviewFragment extends Fragment {
             }
 
 
+
             return posterUris;
         }
 
@@ -141,7 +138,7 @@ public class PreviewFragment extends Fragment {
 
             String sortMethod = params[0];
 
-            String API_KEY = getAPIKEY(API_KEY_ADDRESS);
+            String API_KEY = "";
 
             //Try block fetch JSON data from the cloud
             try{
@@ -236,20 +233,14 @@ public class PreviewFragment extends Fragment {
 
             if (strings != null){
                 mPreviewAdapter.clear();
-                for (int i = 0; i < strings.length; i = i + 2) {
-                    Uri firstUri = Uri.parse(IMAGE_BASE_URI).buildUpon()
+                for (int i = 0; i < strings.length; i++) {
+                    Uri uri = Uri.parse(IMAGE_BASE_URI).buildUpon()
                             .appendEncodedPath(IMAGE_SIZE)
                             .appendEncodedPath(strings[i])
                             .build();
-                    Uri secondUri = Uri.parse(IMAGE_BASE_URI).buildUpon()
-                            .appendEncodedPath(IMAGE_SIZE)
-                            .appendEncodedPath(strings[i + 1])
-                            .build();
-
-                    RowImages rowImages = new RowImages(firstUri, secondUri);
 
                     //Log.v(LOG_TAG, "Poster are " + firstUri + " and " + secondUri);
-                    mPreviewAdapter.add(rowImages);
+                    mPreviewAdapter.add(uri);
                 }
             }
         }

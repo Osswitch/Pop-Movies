@@ -9,11 +9,12 @@
     tools:showIn="@layout/activity_main"
     tools:context=".MainActivityFragment">
 
-    <ListView
+    <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/listView_preview"
-        android:layout_gravity="center"
-        android:overScrollMode="never"/>
+        android:id="@+id/gridView_preview"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="0dp"
+        android:horizontalSpacing="0dp"/>
 
 </RelativeLayout>
