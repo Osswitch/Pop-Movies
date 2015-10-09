@@ -79,26 +79,6 @@ public class PreviewFragment extends Fragment {
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
-        /*private final String API_KEY_ADDRESS
-                = "/home/zhang/AndroidStudioProjects/PopMovies/API_KEY";
-
-
-        private String getAPIKEY (String apiKeyAdd) {
-            String API_KEY = null;
-            String line = null;
-            File file = new File(apiKeyAdd);
-            try {
-                BufferedReader apiReader = new BufferedReader(new FileReader(file));
-                while ((line = apiReader.readLine()) != null ) {
-                    API_KEY = line;
-                }
-            } catch (IOException e) {
-                Log.v(LOG_TAG, "API KEY READING ERROR", e);
-            }
-            return API_KEY;
-        }*/
-
-
 
         //Get poster uri from json
         private String[] getPosterUriFromJson(String resultJSONStr)
@@ -116,8 +96,6 @@ public class PreviewFragment extends Fragment {
                 JSONObject movieObject = resultArray.getJSONObject(i);
                 posterUris[i] = movieObject.getString(OWM_POSTER_PATH);
             }
-
-
 
             return posterUris;
         }
@@ -138,7 +116,7 @@ public class PreviewFragment extends Fragment {
 
             String sortMethod = params[0];
 
-            String API_KEY = "";
+            String API_KEY = getString(R.string.api_key);
 
             //Try block fetch JSON data from the cloud
             try{
