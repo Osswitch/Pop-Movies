@@ -1,5 +1,6 @@
 package com.example.zhang.popmovies.app;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -52,6 +54,13 @@ public class PreviewFragment extends Fragment {
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridView_preview);
         gridView.setAdapter(mPreviewAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent detailIntent = new Intent(getActivity(), MovieDetailActivity.class);
+                startActivity(detailIntent);
+            }
+        });
 
         return rootView;
     }
