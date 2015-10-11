@@ -31,6 +31,8 @@ import java.util.ArrayList;
  */
 public class PreviewFragment extends Fragment {
 
+    private final String LOG_TAG = PreviewFragment.class.getSimpleName();
+
     private PreviewAdapter mPreviewAdapter = null;
 
     public PreviewFragment() {
@@ -49,7 +51,7 @@ public class PreviewFragment extends Fragment {
         mPreviewAdapter = new PreviewAdapter(
                 getActivity(),
                 R.layout.grid_item_preview,
-                new ArrayList<Uri>()
+                new ArrayList<MovieInfo>()
         );
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridView_preview);
@@ -58,6 +60,7 @@ public class PreviewFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent detailIntent = new Intent(getActivity(), MovieDetailActivity.class);
+                Log.v(LOG_TAG, "Test " + mPreviewAdapter.getItem(position).getOriginalTitle());
                 startActivity(detailIntent);
             }
         });
@@ -80,7 +83,7 @@ public class PreviewFragment extends Fragment {
         updateMovies();
     }
 
-    public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
+    public class FetchMoviesTask extends AsyncTask<String, Void, MovieInfo[]> {
 
         //IN CASE IT IS NEEDED
         //"http://api.themoviedb.org/3/discover/movie?sort_by" +
@@ -90,27 +93,39 @@ public class PreviewFragment extends Fragment {
 
 
         //Get poster uri from json
-        private String[] getPosterUriFromJson(String resultJSONStr)
+        private MovieInfo[] getMovieInfoFromJson(String resultJSONStr)
         throws JSONException{
 
             final String OWM_RESULTS = "results";
+            final String OWM_ID = "id";
+            final String OWM_ORIGINAL_TITLE = "original_title";
+            final String OWM_RELEASE_DATE = "release_date";
             final String OWM_POSTER_PATH = "poster_path";
+            final String OWM_VOTE_AVERAGE = "vote_average";
+            final String OWM_OVERVIEW = "overview";
 
             JSONObject resultJSON = new JSONObject(resultJSONStr);
             JSONArray resultArray = resultJSON.getJSONArray(OWM_RESULTS);
             int pageMovieCounts = resultArray.length();
-            String[] posterUris = new String[pageMovieCounts];
+            MovieInfo[] movieInfos = new MovieInfo[pageMovieCounts];
 
             for (int i = 0; i < pageMovieCounts; i++) {
+                MovieInfo movieInfo = new MovieInfo();
                 JSONObject movieObject = resultArray.getJSONObject(i);
-                posterUris[i] = movieObject.getString(OWM_POSTER_PATH);
+                movieInfo.setMovieId(movieObject.getString(OWM_ID));
+                movieInfo.setOriginalTitle(movieObject.getString(OWM_ORIGINAL_TITLE));
+                movieInfo.setReleaseDate(movieObject.getString(OWM_RELEASE_DATE));
+                movieInfo.setPosterPath(movieObject.getString(OWM_POSTER_PATH));
+                movieInfo.setVoteAverage(movieObject.getDouble(OWM_VOTE_AVERAGE));
+                movieInfo.setOverview(movieObject.getString(OWM_OVERVIEW));
+                movieInfos[i] = movieInfo;
             }
 
-            return posterUris;
+            return movieInfos;
         }
 
         @Override
-        protected String[]doInBackground(String... params) {
+        protected MovieInfo[]doInBackground(String... params) {
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -204,8 +219,8 @@ public class PreviewFragment extends Fragment {
             }
 
             try {
-                String[] posterUris = getPosterUriFromJson(resultJSONStr);
-                return  posterUris;
+                MovieInfo[] movieInfos = getMovieInfoFromJson(resultJSONStr);
+                return  movieInfos;
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
             }
@@ -213,25 +228,13 @@ public class PreviewFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String[] strings) {
+        protected void onPostExecute(MovieInfo[] movieInfos) {
 
-            final String IMAGE_BASE_URI = "http://image.tmdb.org/t/p";
-            final String IMAGE_SIZE = "w500";
-
-            if (strings != null){
+            if (movieInfos != null) {
                 mPreviewAdapter.clear();
-                for (int i = 0; i < strings.length; i++) {
-                    Uri uri = Uri.parse(IMAGE_BASE_URI).buildUpon()
-                            .appendEncodedPath(IMAGE_SIZE)
-                            .appendEncodedPath(strings[i])
-                            .build();
-
-                    //Log.v(LOG_TAG, "Poster are " + firstUri + " and " + secondUri);
-                    mPreviewAdapter.add(uri);
-                }
+                mPreviewAdapter.addAll(movieInfos);
             }
         }
-
 
     }
 }

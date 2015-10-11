@@ -17,11 +17,11 @@ import java.util.List;
  * Created by zhang on 02/10/15.
  */
 
-public class PreviewAdapter extends ArrayAdapter<Uri> {
+public class PreviewAdapter extends ArrayAdapter<MovieInfo> {
 
     //Context context;
 
-    public PreviewAdapter(Context context, int resourceId, List<Uri> items) {
+    public PreviewAdapter(Context context, int resourceId, List<MovieInfo> items) {
         super(context, resourceId, items);
         //this.context = context;
     }
@@ -29,7 +29,15 @@ public class PreviewAdapter extends ArrayAdapter<Uri> {
 
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        Uri uri = getItem(position);
+        final String IMAGE_BASE_URI = "http://image.tmdb.org/t/p";
+        final String IMAGE_SIZE = "w500";
+
+        MovieInfo movieInfo = getItem(position);
+
+        Uri uri = Uri.parse(IMAGE_BASE_URI).buildUpon()
+                .appendEncodedPath(IMAGE_SIZE)
+                .appendEncodedPath(movieInfo.getPosterPath())
+                .build();
 
         LayoutInflater mInflater = (LayoutInflater) getContext()
                 .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
