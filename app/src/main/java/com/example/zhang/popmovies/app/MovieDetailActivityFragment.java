@@ -1,7 +1,8 @@
 package com.example.zhang.popmovies.app;
 
-import android.support.v4.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,10 @@ import android.view.ViewGroup;
  */
 public class MovieDetailActivityFragment extends Fragment {
 
+    private final String LOG_TAG = MovieDetailActivityFragment.class.getSimpleName();
+
+    MovieInfo movieInfo = new MovieInfo();
+
     public MovieDetailActivityFragment() {
     }
 
@@ -19,6 +24,12 @@ public class MovieDetailActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         //return inflater.inflate(R.layout.fragment_movie_detail, container, false);
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
+        Intent intent = getActivity().getIntent();
+
+        if (intent != null && intent.getExtras() != null) {
+            Bundle mBundle = intent.getExtras();
+            movieInfo = (MovieInfo) mBundle.getSerializable("movieInfo");
+        }
         return rootView;
     }
 }

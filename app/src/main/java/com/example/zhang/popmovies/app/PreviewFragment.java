@@ -59,8 +59,11 @@ public class PreviewFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent detailIntent = new Intent(getActivity(), MovieDetailActivity.class);
-                Log.v(LOG_TAG, "Test " + mPreviewAdapter.getItem(position).getOriginalTitle());
+                MovieInfo movieInfo = mPreviewAdapter.getItem(position);
+                Bundle movieInfoBundle = new Bundle();
+                movieInfoBundle.putSerializable("movieInfo", movieInfo);
+                Intent detailIntent = new Intent(getActivity(), MovieDetailActivity.class)
+                        .putExtras(movieInfoBundle);
                 startActivity(detailIntent);
             }
         });

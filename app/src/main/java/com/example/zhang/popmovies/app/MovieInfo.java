@@ -1,10 +1,13 @@
 package com.example.zhang.popmovies.app;
 
+import java.io.Serializable;
+
 /**
  * Created by zhang on 10/10/15.
  */
-public class MovieInfo {
+public class MovieInfo implements Serializable {
 
+    private static final long serialUID = 1L;
     private String movieId;
     private String originalTitle;
     private String releaseDate;
