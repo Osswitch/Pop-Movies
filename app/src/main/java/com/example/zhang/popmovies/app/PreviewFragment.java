@@ -99,28 +99,28 @@ public class PreviewFragment extends Fragment {
         private MovieInfo[] getMovieInfoFromJson(String resultJSONStr)
         throws JSONException{
 
-            final String OWM_RESULTS = "results";
-            final String OWM_ID = "id";
-            final String OWM_ORIGINAL_TITLE = "original_title";
-            final String OWM_RELEASE_DATE = "release_date";
-            final String OWM_POSTER_PATH = "poster_path";
-            final String OWM_VOTE_AVERAGE = "vote_average";
-            final String OWM_OVERVIEW = "overview";
+            final String MDB_RESULTS = "results";
+            final String MDB_ID = "id";
+            final String MDB_ORIGINAL_TITLE = "original_title";
+            final String MDB_RELEASE_DATE = "release_date";
+            final String MDB_POSTER_PATH = "poster_path";
+            final String MDB_VOTE_AVERAGE = "vote_average";
+            final String MDB_OVERVIEW = "overview";
 
             JSONObject resultJSON = new JSONObject(resultJSONStr);
-            JSONArray resultArray = resultJSON.getJSONArray(OWM_RESULTS);
+            JSONArray resultArray = resultJSON.getJSONArray(MDB_RESULTS);
             int pageMovieCounts = resultArray.length();
             MovieInfo[] movieInfos = new MovieInfo[pageMovieCounts];
 
             for (int i = 0; i < pageMovieCounts; i++) {
                 MovieInfo movieInfo = new MovieInfo();
                 JSONObject movieObject = resultArray.getJSONObject(i);
-                movieInfo.setMovieId(movieObject.getString(OWM_ID));
-                movieInfo.setOriginalTitle(movieObject.getString(OWM_ORIGINAL_TITLE));
-                movieInfo.setReleaseDate(movieObject.getString(OWM_RELEASE_DATE));
-                movieInfo.setPosterPath(movieObject.getString(OWM_POSTER_PATH));
-                movieInfo.setVoteAverage(movieObject.getDouble(OWM_VOTE_AVERAGE));
-                movieInfo.setOverview(movieObject.getString(OWM_OVERVIEW));
+                movieInfo.setMovieId(movieObject.getString(MDB_ID));
+                movieInfo.setOriginalTitle(movieObject.getString(MDB_ORIGINAL_TITLE));
+                movieInfo.setReleaseDate(movieObject.getString(MDB_RELEASE_DATE));
+                movieInfo.setPosterPath(movieObject.getString(MDB_POSTER_PATH));
+                movieInfo.setVoteAverage(movieObject.getDouble(MDB_VOTE_AVERAGE));
+                movieInfo.setOverview(movieObject.getString(MDB_OVERVIEW));
                 movieInfos[i] = movieInfo;
             }
 
