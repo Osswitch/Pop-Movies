@@ -26,4 +26,6 @@
 
     <!--Detail Activity-->
     <string name="title_activity_movie_detail">MovieDetailActivity</string>
+
+    <string name="mark_as_favorite">MARK AS FAVORITE</string>
 </resources>
