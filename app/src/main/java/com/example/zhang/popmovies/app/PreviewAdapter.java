@@ -36,7 +36,7 @@ public class PreviewAdapter extends ArrayAdapter<MovieInfo> {
 
         Uri uri = Uri.parse(IMAGE_BASE_URI).buildUpon()
                 .appendEncodedPath(IMAGE_SIZE)
-                .appendEncodedPath(movieInfo.getPosterPath())
+                .appendEncodedPath(movieInfo.posterPath)
                 .build();
 
         LayoutInflater mInflater = (LayoutInflater) getContext()

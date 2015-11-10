@@ -1,22 +1,22 @@
 package com.example.zhang.popmovies.app;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by zhang on 10/10/15.
  */
-public class MovieInfo implements Serializable {
+public class MovieInfo implements Parcelable {
 
-    private static final long serialUID = 1L;
-    private String movieId;
-    private String originalTitle;
-    private String releaseDate;
-    private String posterPath;
-    private Double voteAverage;
-    private String overview;
+    String movieId;
+    String originalTitle;
+    String releaseDate;
+    String posterPath;
+    Double voteAverage;
+    String overview;
 
-    public MovieInfo() {
-    }
+
+    public MovieInfo(){}
 
     public MovieInfo(String movieId, String originalTitle, String releaseDate,
                      String posterPath, Double voteAverage, String overview) {
@@ -28,52 +28,40 @@ public class MovieInfo implements Serializable {
         this.overview = overview;
     }
 
-    public String getMovieId() {
-        return movieId;
+    private MovieInfo(Parcel in) {
+        movieId = in.readString();
+        originalTitle = in.readString();
+        releaseDate = in.readString();
+        posterPath = in.readString();
+        voteAverage = in.readDouble();
+        overview = in.readString();
     }
 
-    public void setMovieId(String movieId) {
-        this.movieId = movieId;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public String getOriginalTitle() {
-        return originalTitle;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(movieId);
+        dest.writeString(originalTitle);
+        dest.writeString(releaseDate);
+        dest.writeString(posterPath);
+        dest.writeDouble(voteAverage);
+        dest.writeString(overview);
     }
 
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
-    }
+    public static final Parcelable.Creator<MovieInfo> CREATOR = new Parcelable.Creator<MovieInfo>(){
+        @Override
+        public MovieInfo createFromParcel(Parcel source) {
+            return new MovieInfo(source);
+        }
 
-    public String getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
-    public String getPosterPath() {
-        return posterPath;
-    }
-
-    public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
-    }
-
-    public Double getVoteAverage() {
-        return voteAverage;
-    }
-
-    public void setVoteAverage(Double voteAverage) {
-        this.voteAverage = voteAverage;
-    }
-
-    public String getOverview() {
-        return overview;
-    }
-
-    public void setOverview(String overview) {
-        this.overview = overview;
-    }
+        @Override
+        public MovieInfo[] newArray(int size) {
+            return new MovieInfo[size];
+        }
+    };
 
 }

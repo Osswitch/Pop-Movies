@@ -61,7 +61,7 @@ public class PreviewFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MovieInfo movieInfo = mPreviewAdapter.getItem(position);
                 Bundle movieInfoBundle = new Bundle();
-                movieInfoBundle.putSerializable("movieInfo", movieInfo);
+                movieInfoBundle.putParcelable("movieInfo", movieInfo);
                 Intent detailIntent = new Intent(getActivity(), MovieDetailActivity.class)
                         .putExtras(movieInfoBundle);
                 startActivity(detailIntent);
@@ -113,14 +113,16 @@ public class PreviewFragment extends Fragment {
             MovieInfo[] movieInfos = new MovieInfo[pageMovieCounts];
 
             for (int i = 0; i < pageMovieCounts; i++) {
-                MovieInfo movieInfo = new MovieInfo();
                 JSONObject movieObject = resultArray.getJSONObject(i);
-                movieInfo.setMovieId(movieObject.getString(MDB_ID));
-                movieInfo.setOriginalTitle(movieObject.getString(MDB_ORIGINAL_TITLE));
-                movieInfo.setReleaseDate(movieObject.getString(MDB_RELEASE_DATE));
-                movieInfo.setPosterPath(movieObject.getString(MDB_POSTER_PATH));
-                movieInfo.setVoteAverage(movieObject.getDouble(MDB_VOTE_AVERAGE));
-                movieInfo.setOverview(movieObject.getString(MDB_OVERVIEW));
+                MovieInfo movieInfo = new MovieInfo(movieObject.getString(MDB_ID),
+                        movieObject.getString(MDB_ORIGINAL_TITLE),
+                        movieObject.getString(MDB_RELEASE_DATE),
+                        movieObject.getString(MDB_POSTER_PATH),
+                        movieObject.getDouble(MDB_VOTE_AVERAGE),
+                        movieObject.getString(MDB_OVERVIEW)
+                );
+
+
                 movieInfos[i] = movieInfo;
             }
 

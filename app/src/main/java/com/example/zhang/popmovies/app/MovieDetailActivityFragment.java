@@ -47,18 +47,18 @@ public class MovieDetailActivityFragment extends Fragment {
 
         if (intent != null && intent.getExtras() != null) {
             Bundle mBundle = intent.getExtras();
-            movieInfo = (MovieInfo) mBundle.getSerializable("movieInfo");
+            movieInfo = (MovieInfo) mBundle.getParcelable("movieInfo");
 
             Uri uri = Uri.parse(IMAGE_BASE_URI).buildUpon()
                     .appendEncodedPath(IMAGE_SIZE)
-                    .appendEncodedPath(movieInfo.getPosterPath())
+                    .appendEncodedPath(movieInfo.posterPath)
                     .build();
 
-            titleTextView.setText(movieInfo.getOriginalTitle());
+            titleTextView.setText(movieInfo.originalTitle);
             Picasso.with(getContext()).load(uri).into(posterImageView);
-            releaseDateTextView.setText(movieInfo.getReleaseDate());
-            voteAverageTextView.setText(movieInfo.getVoteAverage().toString());
-            plotSynopsisTextView.setText(movieInfo.getOverview());
+            releaseDateTextView.setText(movieInfo.releaseDate);
+            voteAverageTextView.setText(movieInfo.voteAverage.toString());
+            plotSynopsisTextView.setText(movieInfo.overview);
         }
         return rootView;
     }
