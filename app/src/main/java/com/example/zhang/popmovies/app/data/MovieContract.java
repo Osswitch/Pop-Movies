@@ -2,6 +2,7 @@ package com.example.zhang.popmovies.app.data;
 
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -35,5 +36,17 @@ public class MovieContract {
         public static final String COLUMN_VOTE_AVERAGE = "vote_average";
         public static final String COLUMN_VOTE_COUNT = "vote_count";
         public static final String COLUMN_ISFAVOURITE = "is_favourite";
+
+        public static Uri buildMovieUri (long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildMovieWithMovieId (long movieId) {
+            return CONTENT_URI.buildUpon().appendPath(Long.toString(movieId)).build();
+        }
+
+        public static Long getMovieIdFromUri (Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(1));
+        }
     }
 }
