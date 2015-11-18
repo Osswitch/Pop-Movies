@@ -3,6 +3,7 @@ package com.example.zhang.popmovies.app.data;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
+import android.database.Cursor;
 import android.test.AndroidTestCase;
 
 /**
@@ -12,10 +13,34 @@ public class TestProvider extends AndroidTestCase {
 
     public static final String LOG_TAG = TestProvider.class.getSimpleName();
 
+    public void deleteAllRecordsFromProvider() {
+        mContext.getContentResolver().delete(
+                MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                null
+        );
+
+        Cursor cursor = mContext.getContentResolver().query(
+                MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        assertEquals("Error: records not deleted from Movie table during delete", 0, cursor.getCount());
+        cursor.close();
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        deleteAllRecordsFromProvider();
+    }
+
     /*
-        This test checks to make sure that the content provider is registered correctly.
-        Students: Uncomment this test to make sure you've correctly registered the WeatherProvider.
-     */
+            This test checks to make sure that the content provider is registered correctly.
+            Students: Uncomment this test to make sure you've correctly registered the WeatherProvider.
+         */
     public void testProviderRegistry() {
         PackageManager pm = mContext.getPackageManager();
 
