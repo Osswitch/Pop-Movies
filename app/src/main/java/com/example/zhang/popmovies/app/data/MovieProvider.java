@@ -22,7 +22,7 @@ public class MovieProvider extends ContentProvider {
         final String authority = MovieContract.CONTENT_AUTHORITY;
         mUriMatcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
         mUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "#", MOVIE_WITH_MOVIE_ID);
-        return mUriMatcher; 
+        return mUriMatcher;
     }
 
     @Override
