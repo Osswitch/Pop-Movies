@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
  */
 public class MovieProvider extends ContentProvider {
 
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
     private MovieDbHelper mOpenHelper;
 
     static final int MOVIE = 100;
@@ -21,13 +22,14 @@ public class MovieProvider extends ContentProvider {
         final UriMatcher mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MovieContract.CONTENT_AUTHORITY;
         mUriMatcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
-        mUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "#", MOVIE_WITH_MOVIE_ID);
+        mUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_WITH_MOVIE_ID);
         return mUriMatcher;
     }
 
     @Override
     public boolean onCreate() {
-        return false;
+        mOpenHelper = new MovieDbHelper(getContext());
+        return true;
     }
 
     @Nullable
@@ -39,7 +41,16 @@ public class MovieProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(Uri uri) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+
+        switch (match) {
+            case MOVIE:
+                return MovieContract.MovieEntry.CONTENT_TYPE;
+            case MOVIE_WITH_MOVIE_ID:
+                return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
     }
 
     @Nullable

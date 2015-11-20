@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
 /**
@@ -27,14 +28,26 @@ public class TestProvider extends AndroidTestCase {
                 null,
                 null
         );
-        assertEquals("Error: records not deleted from Movie table during delete", 0, cursor.getCount());
-        cursor.close();
+        assertEquals("Error: records not deleted from Movie table during delete", null, cursor);
+        //cursor.close();
+    }
+
+    public void deleteAllRecordsFromDB() {
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        db.delete(MovieContract.MovieEntry.TABLE_NAME, null, null);
+        db.close();
+    }
+
+    public void deleteAllRecords() {
+        deleteAllRecordsFromProvider();
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteAllRecordsFromProvider();
+        deleteAllRecords();
     }
 
     /*
