@@ -41,7 +41,7 @@ public class TestProvider extends AndroidTestCase {
     }
 
     public void deleteAllRecords() {
-        deleteAllRecordsFromProvider();
+        deleteAllRecordsFromDB();
     }
 
     @Override
@@ -67,13 +67,24 @@ public class TestProvider extends AndroidTestCase {
             ProviderInfo providerInfo = pm.getProviderInfo(componentName, 0);
 
             // Make sure that the registered authority matches the authority from the Contract.
-            assertEquals("Error: WeatherProvider registered with authority: " + providerInfo.authority +
+            assertEquals("Error: MovieProvider registered with authority: " + providerInfo.authority +
                             " instead of authority: " + MovieContract.CONTENT_AUTHORITY,
                     providerInfo.authority, MovieContract.CONTENT_AUTHORITY);
         } catch (PackageManager.NameNotFoundException e) {
             // I guess the provider isn't registered correctly.
-            assertTrue("Error: WeatherProvider not registered at " + mContext.getPackageName(),
+            assertTrue("Error: MovieProvider not registered at " + mContext.getPackageName(),
                     false);
         }
+    }
+
+    public void testGetType() {
+        String type = mContext.getContentResolver().getType(MovieContract.MovieEntry.CONTENT_URI);
+        assertEquals("Error: the MovieEntry CONTENT_URI should return MovieEntry.CONTENT_TYEP",
+                MovieContract.MovieEntry.CONTENT_TYPE, type);
+
+        int testMovieId = 10000;
+        type = mContext.getContentResolver().getType(MovieContract.MovieEntry.buildMovieWithMovieId(testMovieId));
+        assertEquals("Error: the MovieEntry CONTENT_URI with movie id should return MovieEntry.CONTENT_ITEM_TYPE",
+                MovieContract.MovieEntry.CONTENT_ITEM_TYPE, type);
     }
 }
