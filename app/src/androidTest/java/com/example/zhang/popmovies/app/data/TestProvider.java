@@ -1,6 +1,7 @@
 package com.example.zhang.popmovies.app.data;
 
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.database.Cursor;
@@ -86,5 +87,27 @@ public class TestProvider extends AndroidTestCase {
         type = mContext.getContentResolver().getType(MovieContract.MovieEntry.buildMovieWithMovieId(testMovieId));
         assertEquals("Error: the MovieEntry CONTENT_URI with movie id should return MovieEntry.CONTENT_ITEM_TYPE",
                 MovieContract.MovieEntry.CONTENT_ITEM_TYPE, type);
+    }
+
+    public void testMovieQuery() {
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues testValues = TestUtilities.createAntManValues();
+        long movieId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, testValues);
+        assertTrue("Unable to insert Ant-Man into the Database", movieId != -1);
+
+        db.close();
+
+        Cursor movieCursor = mContext.getContentResolver().query(
+                MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        TestUtilities.validateCursor("testMovieQuery", movieCursor, testValues);
     }
 }
