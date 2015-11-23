@@ -31,8 +31,8 @@ public class TestProvider extends AndroidTestCase {
                 null,
                 null
         );
-        assertEquals("Error: records not deleted from Movie table during delete", null, cursor);
-        //cursor.close();
+        assertEquals("Error: records not deleted from Movie table during delete", 0, cursor.getCount());
+        cursor.close();
     }
 
     public void deleteAllRecordsFromDB() {
@@ -139,5 +139,19 @@ public class TestProvider extends AndroidTestCase {
 
         TestUtilities.validateCursor("testInsertReadProvider. Error validating MovieEntry.",
                 cursor, testValue);
+    }
+
+    public void testDeleteRecords() {
+        testInsertReadProvider();
+        TestUtilities.TestContentObserver testContentObserver
+                = TestUtilities.TestContentObserver.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MovieContract.MovieEntry.CONTENT_URI,
+                true, testContentObserver);
+
+        deleteAllRecordsFromProvider();
+
+        testContentObserver.waitForNotificationOrFail();
+
+        mContext.getContentResolver().unregisterContentObserver(testContentObserver);
     }
 }
