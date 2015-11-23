@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 /**
  * Created by zhang on 17/11/15.
@@ -44,7 +45,7 @@ public class TestProvider extends AndroidTestCase {
     }
 
     public void deleteAllRecords() {
-        deleteAllRecordsFromDB();
+        deleteAllRecordsFromProvider();
     }
 
     @Override
@@ -153,5 +154,57 @@ public class TestProvider extends AndroidTestCase {
         testContentObserver.waitForNotificationOrFail();
 
         mContext.getContentResolver().unregisterContentObserver(testContentObserver);
+    }
+
+    public void testUpdateMovie() {
+        ContentValues testValues = TestUtilities.createAntManValues();
+        Uri movieUri = mContext.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI,
+                testValues);
+        long movieRowId = ContentUris.parseId(movieUri);
+
+        assertTrue(movieRowId != -1);
+        Log.d(LOG_TAG, "new row id: " + movieRowId);
+
+        ContentValues updatedValues = new ContentValues(testValues);
+        updatedValues.put(MovieContract.MovieEntry._ID, movieRowId);
+        updatedValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, "THE ANT MAN");
+
+        Cursor movieCursor = mContext.getContentResolver().query(
+                MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        TestUtilities.TestContentObserver testContentObserver
+                = TestUtilities.TestContentObserver.getTestContentObserver();
+        movieCursor.registerContentObserver(testContentObserver);
+
+        int count = mContext.getContentResolver().update(
+                MovieContract.MovieEntry.CONTENT_URI,
+                updatedValues,
+                MovieContract.MovieEntry._ID + "= ?",
+                new String[]{Long.toString(movieRowId)}
+        );
+
+        assertEquals(count, 1);
+
+        testContentObserver.waitForNotificationOrFail();
+        movieCursor.unregisterContentObserver(testContentObserver);
+        movieCursor.close();
+
+        Cursor cursor = mContext.getContentResolver().query(
+                MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                MovieContract.MovieEntry._ID + "=?",
+                new String[]{Long.toString(movieRowId)},
+                null
+        );
+        TestUtilities.validateCursor("testUpdateMovie. Error validating movie entry update.",
+                cursor,
+                updatedValues);
+        cursor.close();
     }
 }
