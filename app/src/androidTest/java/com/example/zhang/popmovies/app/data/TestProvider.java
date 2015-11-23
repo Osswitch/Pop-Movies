@@ -1,11 +1,13 @@
 package com.example.zhang.popmovies.app.data;
 
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.test.AndroidTestCase;
 
 /**
@@ -109,5 +111,33 @@ public class TestProvider extends AndroidTestCase {
         );
 
         TestUtilities.validateCursor("testMovieQuery", movieCursor, testValues);
+    }
+
+    public void testInsertReadProvider() {
+        ContentValues testValue = TestUtilities.createAntManValues();
+        TestUtilities.TestContentObserver testContentObserver
+                = TestUtilities.TestContentObserver.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(MovieContract.MovieEntry.CONTENT_URI,
+                true, testContentObserver);
+        Uri movieUri = mContext.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI,
+                testValue);
+
+        testContentObserver.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(testContentObserver);
+
+        long movieRowId = ContentUris.parseId(movieUri);
+
+        assertTrue(movieRowId != -1);
+
+        Cursor cursor = mContext.getContentResolver().query(
+                MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
+        TestUtilities.validateCursor("testInsertReadProvider. Error validating MovieEntry.",
+                cursor, testValue);
     }
 }
