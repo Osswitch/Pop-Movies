@@ -55,10 +55,14 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         );
 
         if (cursor.moveToFirst()) {
-            return true;
-        } else {
+            cursor.close();
             return false;
+        } else {
+            cursor.close();
+            return true;
         }
+
+
     }
 
 
@@ -80,6 +84,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
             JSONObject resultJSON = new JSONObject(resultJSONStr);
             JSONArray resultArray = resultJSON.getJSONArray(MDB_RESULTS);
             int perPageMovieCounts = resultArray.length();
+            Log.v(LOG_TAG, Integer.toString(perPageMovieCounts));
             Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
 
             for (int i = 0; i < perPageMovieCounts; i++) {
@@ -88,6 +93,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                 if (movieExist(movieObject.getInt(MDB_ID))) {
                     movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID,
                             movieObject.getInt(MDB_ID));
+                    Log.v(LOG_TAG, movieObject.getString(MDB_ORIGINAL_TITLE));
                     movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
                             movieObject.getString(MDB_ORIGINAL_TITLE));
                     movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW,
