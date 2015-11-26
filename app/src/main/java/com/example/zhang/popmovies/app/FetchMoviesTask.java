@@ -44,28 +44,6 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         return retPostPaths;
     }
 
-    private Boolean movieExist(Integer movieId) {
-
-        Cursor cursor = mContext.getContentResolver().query(
-                MovieContract.MovieEntry.CONTENT_URI,
-                null,
-                MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
-                new String[]{Integer.toString(movieId)},
-                null
-        );
-
-        if (cursor.moveToFirst()) {
-            cursor.close();
-            return false;
-        } else {
-            cursor.close();
-            return true;
-        }
-
-
-    }
-
-
     //Get poster uri from json
     private String[] getMovieFromJson(String resultJSONStr)
             throws JSONException {
@@ -84,32 +62,28 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
             JSONObject resultJSON = new JSONObject(resultJSONStr);
             JSONArray resultArray = resultJSON.getJSONArray(MDB_RESULTS);
             int perPageMovieCounts = resultArray.length();
-            Log.v(LOG_TAG, Integer.toString(perPageMovieCounts));
-            Vector<ContentValues> contentValuesVector = new Vector<ContentValues>();
+            Vector<ContentValues> contentValuesVector = new Vector<ContentValues>(perPageMovieCounts);
 
             for (int i = 0; i < perPageMovieCounts; i++) {
                 JSONObject movieObject = resultArray.getJSONObject(i);
                 ContentValues movieValues = new ContentValues();
-                if (movieExist(movieObject.getInt(MDB_ID))) {
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID,
-                            movieObject.getInt(MDB_ID));
-                    Log.v(LOG_TAG, movieObject.getString(MDB_ORIGINAL_TITLE));
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
-                            movieObject.getString(MDB_ORIGINAL_TITLE));
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW,
-                            movieObject.getString(MDB_OVERVIEW));
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-                            movieObject.getString(MDB_RELEASE_DATE));
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-                            movieObject.getString(MDB_POSTER_PATH));
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY,
-                            movieObject.getLong(MDB_POPULARITY));
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
-                            movieObject.getLong(MDB_VOTE_AVERAGE));
-                    movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT,
-                            movieObject.getInt(MDB_VOTE_COUNT));
-                    contentValuesVector.add(movieValues);
-                }
+                movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+                        movieObject.getInt(MDB_ID));
+                movieValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
+                        movieObject.getString(MDB_ORIGINAL_TITLE));
+                movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW,
+                        movieObject.getString(MDB_OVERVIEW));
+                movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+                        movieObject.getString(MDB_RELEASE_DATE));
+                movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+                        movieObject.getString(MDB_POSTER_PATH));
+                movieValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY,
+                        movieObject.getLong(MDB_POPULARITY));
+                movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+                        movieObject.getLong(MDB_VOTE_AVERAGE));
+                movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT,
+                        movieObject.getInt(MDB_VOTE_COUNT));
+                contentValuesVector.add(movieValues);
             }
 
             Cursor cursor = mContext.getContentResolver().query(
@@ -141,7 +115,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
 
 
             Log.d(LOG_TAG, "Fetch movie task complete. "
-                    + (cursor.getCount() - storedMovieNum) + " Inserted");
+                    + (cursor.getCount() - storedMovieNum) + " New Movies Inserted");
             cursor.close();
 
             String[] posterPaths;
