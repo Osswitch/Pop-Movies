@@ -62,10 +62,28 @@ public class MovieContract {
 
         public static final String TABLE_NAME = "trailer";
         public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_TRAILER_NAME = "trailer_name";
         public static final String COLUMN_TRAILER_PATH = "trailer_path";
 
         public static Uri buildTrailerUri (long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildTrailerWithMovieId (long movieId) {
+            return CONTENT_URI.buildUpon().appendPath(Long.toString(movieId)).build();
+        }
+
+        public static Uri buildTrailerWithMovieIdAndTrailerName (long movieId, String trailerName) {
+            return CONTENT_URI.buildUpon().appendPath(Long.toString(movieId))
+                    .appendPath(trailerName).build();
+        }
+
+        public static Long getMovieIdFromUri (Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(1));
+        }
+
+        public static String getTrailerNameFromUri (Uri uri) {
+            return uri.getPathSegments().get(2);
         }
     }
 }

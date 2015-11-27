@@ -1,5 +1,6 @@
 package com.example.zhang.popmovies.app.data;
 
+import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -19,6 +20,8 @@ public class MovieProvider extends ContentProvider {
     static final int MOVIE = 100;
     static final int MOVIE_WITH_MOVIE_ID = 101;
     static final int TRAILER = 200;
+    static final int TRAILER_WITH_MOVIE_ID = 201;
+    static final int TRAILER_WITH_MOVIE_ID_AND_TRAILER_NAME = 202;
 
     static UriMatcher buildUriMatcher() {
         final UriMatcher mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -26,6 +29,8 @@ public class MovieProvider extends ContentProvider {
         mUriMatcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
         mUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_WITH_MOVIE_ID);
         mUriMatcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
+        mUriMatcher.addURI(authority, MovieContract.PATH_TRAILER + "/#", TRAILER_WITH_MOVIE_ID);
+        mUriMatcher.addURI(authority, MovieContract.PATH_TRAILER + "/#/*", TRAILER_WITH_MOVIE_ID_AND_TRAILER_NAME);
         return mUriMatcher;
     }
 
@@ -73,6 +78,29 @@ public class MovieProvider extends ContentProvider {
                         sortOrder
                 );
                 break;
+            case TRAILER_WITH_MOVIE_ID:
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.TrailerEntry.TABLE_NAME,
+                        projection,
+                        MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + "=?",
+                        new String[]{Long.toString(MovieContract.TrailerEntry.getMovieIdFromUri(uri))},
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            case TRAILER_WITH_MOVIE_ID_AND_TRAILER_NAME:
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.TrailerEntry.TABLE_NAME,
+                        projection,
+                        MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + "=? AND "
+                        + MovieContract.TrailerEntry.COLUMN_TRAILER_NAME + "=?",
+                        new String[]{Long.toString(MovieContract.TrailerEntry.getMovieIdFromUri(uri)), MovieContract.TrailerEntry.getTrailerNameFromUri(uri)},
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -92,6 +120,10 @@ public class MovieProvider extends ContentProvider {
                 return MovieContract.MovieEntry.CONTENT_ITEM_TYPE;
             case TRAILER:
                 return MovieContract.TrailerEntry.CONTENT_TYPE;
+            case TRAILER_WITH_MOVIE_ID:
+                return MovieContract.TrailerEntry.CONTENT_TYPE;
+            case TRAILER_WITH_MOVIE_ID_AND_TRAILER_NAME:
+                return MovieContract.TrailerEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -246,5 +278,15 @@ public class MovieProvider extends ContentProvider {
             default:
                 return super.bulkInsert(uri, contentValues);
         }
+    }
+
+    // You do not need to call this method. This is a method specifically to assist the testing
+    // framework in running smoothly. You can read more at:
+    // http://developer.android.com/reference/android/content/ContentProvider.html#shutdown()
+    @Override
+    @TargetApi(11)
+    public void shutdown() {
+        mOpenHelper.close();
+        super.shutdown();
     }
 }
