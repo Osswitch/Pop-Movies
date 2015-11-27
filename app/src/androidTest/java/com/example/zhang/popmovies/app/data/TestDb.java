@@ -1,5 +1,6 @@
 package com.example.zhang.popmovies.app.data;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
@@ -24,18 +25,23 @@ public class TestDb extends AndroidTestCase {
 
         final HashSet<String> tableNameHashSet = new HashSet<String>();
         tableNameHashSet.add(MovieContract.MovieEntry.TABLE_NAME);
+        tableNameHashSet.add(MovieContract.TrailerEntry.TABLE_NAME);
 
         mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
         SQLiteDatabase db = new MovieDbHelper(this.mContext).getWritableDatabase();
         assertEquals(true, db.isOpen());
 
-        /*Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
         assertTrue("Error: this means that the database has not been created correctly",
                 c.moveToFirst());
 
         do {
             tableNameHashSet.remove(c.getString(0));
-        } while (c.moveToNext());*/
+        } while (c.moveToNext());
+
+        assertTrue("Error: Your database was created without both the movie entry and the trailer" +
+                "entry tables", tableNameHashSet.isEmpty());
+
         db.close();
     }
 }
