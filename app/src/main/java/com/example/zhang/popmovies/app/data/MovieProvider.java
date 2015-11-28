@@ -23,6 +23,66 @@ public class MovieProvider extends ContentProvider {
     static final int TRAILER_WITH_MOVIE_ID = 201;
     static final int TRAILER_WITH_MOVIE_ID_AND_TRAILER_NAME = 202;
 
+    private static final String sMovieWithMovieIdSelection
+            = MovieContract.MovieEntry.TABLE_NAME + "."
+            + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?";
+
+    private static final String sTrailerWithMovieIdSelection
+            = MovieContract.TrailerEntry.TABLE_NAME + "."
+            + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + "=?";
+
+    private static final String sTrailerWithMovieIdAndTrailerNameSelection
+            = MovieContract.TrailerEntry.TABLE_NAME + "."
+            + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + "=? AND "
+            + MovieContract.TrailerEntry.COLUMN_TRAILER_NAME + "=?";
+
+    private Cursor getMovieWithMovieId (Uri uri, String[] projection, String sortOrder) {
+
+        String movieId = Long.toString(MovieContract.MovieEntry.getMovieIdFromUri(uri));
+
+        return mOpenHelper.getReadableDatabase().query(
+                MovieContract.MovieEntry.TABLE_NAME,
+                projection,
+                sMovieWithMovieIdSelection,
+                new String[]{movieId},
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+    private Cursor getTrailerWithMovieId (Uri uri, String[] projection, String sortOrder) {
+
+        String movieId = Long.toString(MovieContract.TrailerEntry.getMovieIdFromUri(uri));
+
+        return mOpenHelper.getReadableDatabase().query(
+                MovieContract.TrailerEntry.TABLE_NAME,
+                projection,
+                sTrailerWithMovieIdSelection,
+                new String[]{movieId},
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+    private Cursor getTrailerWithMovieIdAndTrailerName (Uri uri, String[] projection,
+                                                        String sortOrder) {
+
+        String movieId = Long.toString(MovieContract.TrailerEntry.getMovieIdFromUri(uri));
+        String trailerName = MovieContract.TrailerEntry.getTrailerNameFromUri(uri);
+
+        return  mOpenHelper.getReadableDatabase().query(
+                MovieContract.TrailerEntry.TABLE_NAME,
+                projection,
+                sTrailerWithMovieIdAndTrailerNameSelection,
+                new String[]{movieId, trailerName},
+                null,
+                null,
+                sortOrder
+        );
+    }
+
     static UriMatcher buildUriMatcher() {
         final UriMatcher mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MovieContract.CONTENT_AUTHORITY;
@@ -57,15 +117,7 @@ public class MovieProvider extends ContentProvider {
                 );
                 break;
             case MOVIE_WITH_MOVIE_ID:
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        MovieContract.MovieEntry.TABLE_NAME,
-                        projection,
-                        MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
-                        new String[]{Long.toString(MovieContract.MovieEntry.getMovieIdFromUri(uri))},
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor = getMovieWithMovieId(uri, projection, sortOrder);
                 break;
             case TRAILER:
                 retCursor = mOpenHelper.getReadableDatabase().query(
@@ -79,27 +131,10 @@ public class MovieProvider extends ContentProvider {
                 );
                 break;
             case TRAILER_WITH_MOVIE_ID:
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        MovieContract.TrailerEntry.TABLE_NAME,
-                        projection,
-                        MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + "=?",
-                        new String[]{Long.toString(MovieContract.TrailerEntry.getMovieIdFromUri(uri))},
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor = getTrailerWithMovieId(uri, projection, sortOrder);
                 break;
             case TRAILER_WITH_MOVIE_ID_AND_TRAILER_NAME:
-                retCursor = mOpenHelper.getReadableDatabase().query(
-                        MovieContract.TrailerEntry.TABLE_NAME,
-                        projection,
-                        MovieContract.TrailerEntry.TABLE_NAME + "." + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + "=? AND "
-                        + MovieContract.TrailerEntry.COLUMN_TRAILER_NAME + "=?",
-                        new String[]{Long.toString(MovieContract.TrailerEntry.getMovieIdFromUri(uri)), MovieContract.TrailerEntry.getTrailerNameFromUri(uri)},
-                        null,
-                        null,
-                        sortOrder
-                );
+                retCursor = getTrailerWithMovieIdAndTrailerName(uri, projection, sortOrder);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
