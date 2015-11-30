@@ -14,6 +14,7 @@ import com.example.zhang.popmovies.app.utils.PollingCheck;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * Created by zhang on 20/11/15.
@@ -52,19 +53,34 @@ public class TestUtilities extends AndroidTestCase {
         return testValues;
     }
 
-    static ContentValues[] createAntManTrailerValuers(long movieId) {
-        ContentValues[] trailerValues = new ContentValues[2];
+    static Vector<ContentValues> createAntManTrailerValues(long movieId) {
+        Vector<ContentValues> trailerValues = new Vector<ContentValues>();
 
-        trailerValues[0].put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
-        trailerValues[0].put(MovieContract.TrailerEntry.COLUMN_TRAILER_NAME, "First look");
-        trailerValues[0].put(MovieContract.TrailerEntry.COLUMN_TRAILER_PATH, "xInh3VhAWs8");
+        ContentValues trailerValue1 = new ContentValues();
+        ContentValues trailerValue2 = new ContentValues();
 
-        trailerValues[1].put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
-        trailerValues[1].put(MovieContract.TrailerEntry.COLUMN_TRAILER_NAME, "Official Trailer");
-        trailerValues[1].put(MovieContract.TrailerEntry.COLUMN_TRAILER_PATH, "pWdKf3MneyI");
+        trailerValue1.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
+        trailerValue1.put(MovieContract.TrailerEntry.COLUMN_TRAILER_NAME, "First look");
+        trailerValue1.put(MovieContract.TrailerEntry.COLUMN_TRAILER_PATH, "xInh3VhAWs8");
+
+        trailerValue2.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
+        trailerValue2.put(MovieContract.TrailerEntry.COLUMN_TRAILER_NAME, "Official Trailer");
+        trailerValue2.put(MovieContract.TrailerEntry.COLUMN_TRAILER_PATH, "pWdKf3MneyI");
+
+        trailerValues.add(trailerValue1);
+        trailerValues.add(trailerValue2);
 
         return trailerValues;
     }
+
+    /*static ContentValues createAntManTrailerValues (long movieId) {
+        ContentValues trailerValues = new ContentValues();
+        trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
+        trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_NAME, "First look");
+        trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_PATH, "xInh3VhAWs8");
+
+        return trailerValues;
+    }*/
 
     static long insertAntManValues(Context context) {
         MovieDbHelper dbHelper = new MovieDbHelper(context);

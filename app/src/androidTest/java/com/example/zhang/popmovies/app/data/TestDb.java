@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
 import java.util.HashSet;
+import java.util.Vector;
 
 /**
  * Created by zhang on 16/11/15.
@@ -90,6 +91,53 @@ public class TestDb extends AndroidTestCase {
 
     public void testMovieTable() {
 
+        long movieRowId = insertMovie();
+    }
+
+    public void testTrailerTable() {
+        MovieDbHelper db = new MovieDbHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = db.getWritableDatabase();
+        long movieId = insertMovie();
+        assertTrue("Error: Movie not insert correctly", movieId == 102899);
+
+        Vector<ContentValues> testTrailerValues = TestUtilities.createAntManTrailerValues(movieId);
+        //ContentValues testTrailerValues = TestUtilities.createAntManTrailerValues(movieId);
+
+        for (ContentValues testValue : testTrailerValues) {
+            sqLiteDatabase.insert(MovieContract.TrailerEntry.TABLE_NAME,
+                    null,
+                    testValue);
+        }
+
+        /*sqLiteDatabase.insert(MovieContract.TrailerEntry.TABLE_NAME,
+                null,
+                testTrailerValues);*/
+
+        Cursor cursor = sqLiteDatabase.query(MovieContract.TrailerEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        assertTrue("Error: no records found from trailer query", cursor.moveToFirst());
+
+        ContentValues[] testValues = new ContentValues[testTrailerValues.size()];
+        testTrailerValues.toArray(testValues);
+
+        int testValuesIndex = 0;
+        do {
+            TestUtilities.validateCurrentRecord("Failed to validate trailer insert" , cursor, testValues[testValuesIndex]);
+            testValuesIndex++;
+        } while (cursor.moveToNext());
+
+        cursor.close();
+        sqLiteDatabase.close();
+
+    }
+
+    public long insertMovie() {
         MovieDbHelper db = new MovieDbHelper(mContext);
         SQLiteDatabase sqLiteDatabase = db.getWritableDatabase();
 
@@ -112,6 +160,7 @@ public class TestDb extends AndroidTestCase {
         );
 
         assertTrue("No movie returned from movie query", cursor.moveToFirst());
+        long movieId = cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID));
 
         TestUtilities.validateCurrentRecord("Error: movie query validation failed",
                 cursor, testValues);
@@ -119,5 +168,7 @@ public class TestDb extends AndroidTestCase {
         assertFalse("More than one result returned from movie query", cursor.moveToNext());
         cursor.close();
         sqLiteDatabase.close();
+
+        return movieId;
     }
 }
