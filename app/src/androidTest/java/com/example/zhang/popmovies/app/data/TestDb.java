@@ -42,6 +42,48 @@ public class TestDb extends AndroidTestCase {
         assertTrue("Error: Your database was created without both the movie entry and the trailer" +
                 "entry tables", tableNameHashSet.isEmpty());
 
+        c = db.rawQuery("PRAGMA table_info(" + MovieContract.MovieEntry.TABLE_NAME + ")", null);
+        assertTrue("Error: this means we could not query the movie entry table", c.moveToFirst());
+
+        final HashSet<String> movieColumnHashSet = new HashSet<String>();
+        movieColumnHashSet.add(MovieContract.MovieEntry._ID);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_OVERVIEW);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_RELEASE_DATE);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_POSTER_PATH);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_POPULARITY);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_VOTE_COUNT);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_IS_FAVOURITE);
+
+        int movieColumnIndex = c.getColumnIndex("name");
+        do {
+            String columnName = c.getString(movieColumnIndex);
+            movieColumnHashSet.remove(columnName);
+        } while (c.moveToNext());
+
+        assertTrue("Error: The database doesn't contain all the designed movie entry columns ",
+                movieColumnHashSet.isEmpty());
+
+        c = db.rawQuery("PRAGMA table_info(" + MovieContract.TrailerEntry.TABLE_NAME + ")", null);
+        assertTrue("Error: this means we could not query the movie entry table", c.moveToFirst());
+
+        final HashSet<String> trailerColumnHashSet = new HashSet<String>();
+        trailerColumnHashSet.add(MovieContract.TrailerEntry._ID);
+        trailerColumnHashSet.add(MovieContract.TrailerEntry.COLUMN_MOVIE_ID);
+        trailerColumnHashSet.add(MovieContract.TrailerEntry.COLUMN_TRAILER_NAME);
+        trailerColumnHashSet.add(MovieContract.TrailerEntry.COLUMN_TRAILER_PATH);
+
+        int trailerColumnIndex = c.getColumnIndex("name");
+        do {
+            String columnName = c.getString(trailerColumnIndex);
+            trailerColumnHashSet.remove(columnName);
+        } while (c.moveToNext());
+
+        assertTrue("Error: The database doesn't contain all the designed movie entry columns ",
+                trailerColumnHashSet.isEmpty());
+
         db.close();
     }
 }
