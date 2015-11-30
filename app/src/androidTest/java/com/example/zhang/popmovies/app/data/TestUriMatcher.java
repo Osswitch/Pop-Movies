@@ -7,9 +7,9 @@ import android.test.AndroidTestCase;
 /**
  * Created by zhang on 17/11/15.
  */
-public class TestUriMathcer extends AndroidTestCase {
+public class TestUriMatcher extends AndroidTestCase {
 
-    private static final String LOG_TAG = TestUriMathcer.class.getSimpleName();
+    private static final String LOG_TAG = TestUriMatcher.class.getSimpleName();
 
     private static final int TEST_MOVIE_ID = 200000;
     private static final String TEST_TRAILER_NAME = "First Look";

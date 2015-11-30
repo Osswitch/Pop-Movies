@@ -73,14 +73,6 @@ public class TestUtilities extends AndroidTestCase {
         return trailerValues;
     }
 
-    /*static ContentValues createAntManTrailerValues (long movieId) {
-        ContentValues trailerValues = new ContentValues();
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_NAME, "First look");
-        trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_PATH, "xInh3VhAWs8");
-
-        return trailerValues;
-    }*/
 
     static long insertAntManValues(Context context) {
         MovieDbHelper dbHelper = new MovieDbHelper(context);
@@ -90,7 +82,22 @@ public class TestUtilities extends AndroidTestCase {
         long movieRowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, testValues);
         assertTrue("Error: Failure to insert Ant-Man values", movieRowId != -1);
 
-        return movieRowId;
+        Cursor cursor = db.query(MovieContract.MovieEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        assertTrue("Error: no result returned", cursor.moveToFirst());
+
+        long movieId = cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_ID));
+
+        cursor.close();
+        db.close();
+
+        return movieId;
     }
 
     static class TestContentObserver extends ContentObserver {

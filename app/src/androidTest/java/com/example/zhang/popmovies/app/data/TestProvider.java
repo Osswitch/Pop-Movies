@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
+import java.util.Vector;
+
 /**
  * Created by zhang on 17/11/15.
  */
@@ -24,6 +26,11 @@ public class TestProvider extends AndroidTestCase {
                 null,
                 null
         );
+        mContext.getContentResolver().delete(
+                MovieContract.TrailerEntry.CONTENT_URI,
+                null,
+                null
+        );
 
         Cursor cursor = mContext.getContentResolver().query(
                 MovieContract.MovieEntry.CONTENT_URI,
@@ -33,6 +40,16 @@ public class TestProvider extends AndroidTestCase {
                 null
         );
         assertEquals("Error: records not deleted from Movie table during delete", 0, cursor.getCount());
+        cursor.close();
+
+        cursor = mContext.getContentResolver().query(
+                MovieContract.TrailerEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        assertEquals("Error: records not deleted from trailer table during delete", 0, cursor.getCount());
         cursor.close();
     }
 
@@ -105,13 +122,13 @@ public class TestProvider extends AndroidTestCase {
                 MovieContract.TrailerEntry.CONTENT_ITEM_TYPE, type);
     }
 
-    public void testMovieQuery() {
+    public void testBasicMovieQuery() {
         MovieDbHelper dbHelper = new MovieDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues testValues = TestUtilities.createAntManValues();
-        long movieId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, testValues);
-        assertTrue("Unable to insert Ant-Man into the Database", movieId != -1);
+        long movieRowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, testValues);
+        assertTrue("Unable to insert Ant-Man into the Database", movieRowId != -1);
 
         db.close();
 
@@ -125,6 +142,45 @@ public class TestProvider extends AndroidTestCase {
         );
 
         TestUtilities.validateCursor("testMovieQuery", movieCursor, testValues);
+    }
+
+    public void testBasicTrailerQuery() {
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+
+        long movieId = TestUtilities.insertAntManValues(mContext);
+        assertTrue("Error: Movie not insert correctly", movieId == 102899);
+
+        Vector<ContentValues> testTrailerValues = TestUtilities.createAntManTrailerValues(movieId);
+
+        for (ContentValues testValue : testTrailerValues) {
+            sqLiteDatabase.insert(MovieContract.TrailerEntry.TABLE_NAME,
+                    null,
+                    testValue);
+        }
+
+        Cursor cursor = sqLiteDatabase.query(MovieContract.TrailerEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        assertTrue("Error: no records found from trailer query", cursor.moveToFirst());
+
+        ContentValues[] testValues = new ContentValues[testTrailerValues.size()];
+        testTrailerValues.toArray(testValues);
+
+        int testValuesIndex = 0;
+        do {
+            TestUtilities.validateCurrentRecord("Failed to validate trailer insert" , cursor, testValues[testValuesIndex]);
+            testValuesIndex++;
+        } while (cursor.moveToNext());
+
+        cursor.close();
+        sqLiteDatabase.close();
+
     }
 
     public void testInsertReadProvider() {
