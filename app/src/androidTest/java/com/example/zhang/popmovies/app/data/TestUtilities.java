@@ -45,8 +45,8 @@ public class TestUtilities extends AndroidTestCase {
         testValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, "Armed with the astonishing ability to shrink in scale but increase in strength, con-man Scott Lang must embrace his inner-hero and help his mentor, Dr. Hank Pym, protect the secret behind his spectacular Ant-Man suit from a new generation of towering threats. Against seemingly insurmountable obstacles, Pym and Lang must plan and pull off a heist that will save the world.");
         testValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, "2015-07-17");
         testValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, "/7SGGUiTE6oc2fh9MjIk5M00dsQd.jpg");
-        testValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, 57.576639);
-        testValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, 7.0);
+        testValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, 70.0038);
+        testValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, 7.1);
         testValues.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, 1581);
 
         return testValues;

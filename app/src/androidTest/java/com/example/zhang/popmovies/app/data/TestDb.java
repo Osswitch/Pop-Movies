@@ -1,5 +1,6 @@
 package com.example.zhang.popmovies.app.data;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
@@ -85,5 +86,38 @@ public class TestDb extends AndroidTestCase {
                 trailerColumnHashSet.isEmpty());
 
         db.close();
+    }
+
+    public void testMovieTable() {
+
+        MovieDbHelper db = new MovieDbHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = db.getWritableDatabase();
+
+        ContentValues testValues = TestUtilities.createAntManValues();
+        long movieRowId = sqLiteDatabase.insert(
+                MovieContract.MovieEntry.TABLE_NAME,
+                null,
+                testValues);
+
+        assertTrue(movieRowId != -1);
+
+        Cursor cursor = sqLiteDatabase.query(
+                MovieContract.MovieEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        assertTrue("No movie returned from movie query", cursor.moveToFirst());
+
+        TestUtilities.validateCurrentRecord("Error: movie query validation failed",
+                cursor, testValues);
+
+        assertFalse("More than one result returned from movie query", cursor.moveToNext());
+        cursor.close();
+        sqLiteDatabase.close();
     }
 }
