@@ -37,14 +37,32 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 + MovieContract.TrailerEntry.TABLE_NAME
                 + " (" + MovieContract.TrailerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, "
+                + MovieContract.TrailerEntry.COLUMN_TRAILER_ID + " TEXT NOT NULL, "
                 + MovieContract.TrailerEntry.COLUMN_TRAILER_NAME + " TEXT NOT NULL, "
                 + MovieContract.TrailerEntry.COLUMN_TRAILER_PATH + " TEXT NOT NULL, "
+                + "UNIQUE (" + MovieContract.TrailerEntry.COLUMN_TRAILER_ID
+                + ") ON CONFLICT REPLACE, "
                 + "FOREIGN KEY (" + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + ") REFERENCES "
                 + MovieContract.MovieEntry.TABLE_NAME + " ("
                 + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "));";
 
+        final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE "
+                + MovieContract.ReviewEntry.TABLE_NAME
+                + " (" + MovieContract.ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, "
+                + MovieContract.ReviewEntry.COLUMN_REVIEW_ID + " TEXT NOT NULL, "
+                + MovieContract.ReviewEntry.COLUMN_REVIEW_AUTHOR + " TEXT NOT NULL, "
+                + MovieContract.ReviewEntry.COLUMN_REVIEW_CONTENT + " TEXT NOT NULL, "
+                + MovieContract.ReviewEntry.COLUMN_REVIEW_URL + " TEXT NOT NULL, "
+                + "FOREIGN KEY (" + MovieContract.ReviewEntry.COLUMN_MOVIE_ID + ") REFERENCES "
+                + MovieContract.MovieEntry.TABLE_NAME + " ("
+                + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "), "
+                + "UNIQUE (" + MovieContract.ReviewEntry.COLUMN_REVIEW_ID
+                + ") ON CONFLICT REPLACE);";
+
         db.execSQL(SQL_CREATE_MOVIE_TABLE);
         db.execSQL(SQL_CREATE_TRAILER_TABLE);
+        db.execSQL(SQL_CREATE_REVIEW_TABLE);
     }
 
     @Override
@@ -52,6 +70,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
         db.execSQL("DROP TABLE IF EXIST " + MovieContract.MovieEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXIST " + MovieContract.TrailerEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXIST " + MovieContract.ReviewEntry.TABLE_NAME);
         onCreate(db);
 
     }

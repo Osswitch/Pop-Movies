@@ -17,6 +17,7 @@ public class MovieContract {
 
     public static final String PATH_MOVIE = "movie";
     public static final String PATH_TRAILER = "trailer";
+    public static final String PATH_REVIEW = "review";
 
     public static final class MovieEntry implements BaseColumns {
 
@@ -62,6 +63,7 @@ public class MovieContract {
 
         public static final String TABLE_NAME = "trailer";
         public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_TRAILER_ID = "trailer_id";
         public static final String COLUMN_TRAILER_NAME = "trailer_name";
         public static final String COLUMN_TRAILER_PATH = "trailer_path";
 
@@ -73,17 +75,43 @@ public class MovieContract {
             return CONTENT_URI.buildUpon().appendPath(Long.toString(movieId)).build();
         }
 
-        public static Uri buildTrailerWithMovieIdAndTrailerName (long movieId, String trailerName) {
+        public static Uri buildTrailerWithMovieIdAndTrailerId (long movieId, String trailerId) {
             return CONTENT_URI.buildUpon().appendPath(Long.toString(movieId))
-                    .appendPath(trailerName).build();
+                    .appendPath(trailerId).build();
         }
 
         public static Long getMovieIdFromUri (Uri uri) {
             return Long.parseLong(uri.getPathSegments().get(1));
         }
 
-        public static String getTrailerNameFromUri (Uri uri) {
+        public static String getMovieTrailerIdFromUri (Uri uri) {
             return uri.getPathSegments().get(2);
+        }
+    }
+
+    public static final class ReviewEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_REVIEW).build();
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;
+
+        public static final String TABLE_NAME = "review";
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_REVIEW_ID = "review_id";
+        public static final String COLUMN_REVIEW_AUTHOR = "review_author";
+        public static final String COLUMN_REVIEW_CONTENT = "review_content";
+        public static final String COLUMN_REVIEW_URL = "review_url";
+
+        public static Uri buildReviewUri(long id) {
+
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildReviewWithMovieId(long movieId) {
+            return CONTENT_URI.buildUpon().appendPath(Long.toString(movieId)).build();
         }
     }
 }

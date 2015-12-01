@@ -21,7 +21,10 @@ public class MovieProvider extends ContentProvider {
     static final int MOVIE_WITH_MOVIE_ID = 101;
     static final int TRAILER = 200;
     static final int TRAILER_WITH_MOVIE_ID = 201;
-    static final int TRAILER_WITH_MOVIE_ID_AND_TRAILER_NAME = 202;
+    static final int TRAILER_WITH_MOVIE_ID_AND_TRAILER_ID = 202;
+    static final int REVIEW = 300;
+    static final int REVIEW_WITH_MOVIE_ID = 301;
+    static final int REVIEW_WITH_MOVIE_ID_AND_REVIEW_ID = 302;
 
     private static final String sMovieWithMovieIdSelection
             = MovieContract.MovieEntry.TABLE_NAME + "."
@@ -31,10 +34,10 @@ public class MovieProvider extends ContentProvider {
             = MovieContract.TrailerEntry.TABLE_NAME + "."
             + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + "=?";
 
-    private static final String sTrailerWithMovieIdAndTrailerNameSelection
+    private static final String sTrailerWithMovieIdAndTrailerIdSelection
             = MovieContract.TrailerEntry.TABLE_NAME + "."
             + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + "=? AND "
-            + MovieContract.TrailerEntry.COLUMN_TRAILER_NAME + "=?";
+            + MovieContract.TrailerEntry.COLUMN_TRAILER_ID + "=?";
 
     private Cursor getMovieWithMovieId (Uri uri, String[] projection, String sortOrder) {
 
@@ -66,17 +69,17 @@ public class MovieProvider extends ContentProvider {
         );
     }
 
-    private Cursor getTrailerWithMovieIdAndTrailerName (Uri uri, String[] projection,
+    private Cursor getTrailerWithMovieIdAndTrailerId (Uri uri, String[] projection,
                                                         String sortOrder) {
 
         String movieId = Long.toString(MovieContract.TrailerEntry.getMovieIdFromUri(uri));
-        String trailerName = MovieContract.TrailerEntry.getTrailerNameFromUri(uri);
+        String trailerId = MovieContract.TrailerEntry.getMovieTrailerIdFromUri(uri);
 
         return  mOpenHelper.getReadableDatabase().query(
                 MovieContract.TrailerEntry.TABLE_NAME,
                 projection,
-                sTrailerWithMovieIdAndTrailerNameSelection,
-                new String[]{movieId, trailerName},
+                sTrailerWithMovieIdAndTrailerIdSelection,
+                new String[]{movieId, trailerId},
                 null,
                 null,
                 sortOrder
@@ -90,7 +93,7 @@ public class MovieProvider extends ContentProvider {
         mUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_WITH_MOVIE_ID);
         mUriMatcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
         mUriMatcher.addURI(authority, MovieContract.PATH_TRAILER + "/#", TRAILER_WITH_MOVIE_ID);
-        mUriMatcher.addURI(authority, MovieContract.PATH_TRAILER + "/#/*", TRAILER_WITH_MOVIE_ID_AND_TRAILER_NAME);
+        mUriMatcher.addURI(authority, MovieContract.PATH_TRAILER + "/#/*", TRAILER_WITH_MOVIE_ID_AND_TRAILER_ID);
         return mUriMatcher;
     }
 
@@ -133,8 +136,8 @@ public class MovieProvider extends ContentProvider {
             case TRAILER_WITH_MOVIE_ID:
                 retCursor = getTrailerWithMovieId(uri, projection, sortOrder);
                 break;
-            case TRAILER_WITH_MOVIE_ID_AND_TRAILER_NAME:
-                retCursor = getTrailerWithMovieIdAndTrailerName(uri, projection, sortOrder);
+            case TRAILER_WITH_MOVIE_ID_AND_TRAILER_ID:
+                retCursor = getTrailerWithMovieIdAndTrailerId(uri, projection, sortOrder);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -157,7 +160,7 @@ public class MovieProvider extends ContentProvider {
                 return MovieContract.TrailerEntry.CONTENT_TYPE;
             case TRAILER_WITH_MOVIE_ID:
                 return MovieContract.TrailerEntry.CONTENT_TYPE;
-            case TRAILER_WITH_MOVIE_ID_AND_TRAILER_NAME:
+            case TRAILER_WITH_MOVIE_ID_AND_TRAILER_ID:
                 return MovieContract.TrailerEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

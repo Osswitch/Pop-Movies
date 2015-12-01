@@ -28,6 +28,7 @@ public class TestDb extends AndroidTestCase {
         final HashSet<String> tableNameHashSet = new HashSet<String>();
         tableNameHashSet.add(MovieContract.MovieEntry.TABLE_NAME);
         tableNameHashSet.add(MovieContract.TrailerEntry.TABLE_NAME);
+        tableNameHashSet.add(MovieContract.ReviewEntry.TABLE_NAME);
 
         mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
         SQLiteDatabase db = new MovieDbHelper(this.mContext).getWritableDatabase();
@@ -41,8 +42,8 @@ public class TestDb extends AndroidTestCase {
             tableNameHashSet.remove(c.getString(0));
         } while (c.moveToNext());
 
-        assertTrue("Error: Your database was created without both the movie entry and the trailer" +
-                "entry tables", tableNameHashSet.isEmpty());
+        assertTrue("Error: Your database was created without both the movie table, the trailer" +
+                " table and review table", tableNameHashSet.isEmpty());
 
         c = db.rawQuery("PRAGMA table_info(" + MovieContract.MovieEntry.TABLE_NAME + ")", null);
         assertTrue("Error: this means we could not query the movie entry table", c.moveToFirst());
@@ -69,11 +70,12 @@ public class TestDb extends AndroidTestCase {
                 movieColumnHashSet.isEmpty());
 
         c = db.rawQuery("PRAGMA table_info(" + MovieContract.TrailerEntry.TABLE_NAME + ")", null);
-        assertTrue("Error: this means we could not query the movie entry table", c.moveToFirst());
+        assertTrue("Error: this means we could not query the trailer table", c.moveToFirst());
 
         final HashSet<String> trailerColumnHashSet = new HashSet<String>();
         trailerColumnHashSet.add(MovieContract.TrailerEntry._ID);
         trailerColumnHashSet.add(MovieContract.TrailerEntry.COLUMN_MOVIE_ID);
+        trailerColumnHashSet.add(MovieContract.TrailerEntry.COLUMN_TRAILER_ID);
         trailerColumnHashSet.add(MovieContract.TrailerEntry.COLUMN_TRAILER_NAME);
         trailerColumnHashSet.add(MovieContract.TrailerEntry.COLUMN_TRAILER_PATH);
 
@@ -85,6 +87,26 @@ public class TestDb extends AndroidTestCase {
 
         assertTrue("Error: The database doesn't contain all the designed movie entry columns ",
                 trailerColumnHashSet.isEmpty());
+
+        c = db.rawQuery("PRAGMA table_info(" + MovieContract.ReviewEntry.TABLE_NAME + ")", null);
+        assertTrue("Error: this means we could not query the review table", c.moveToFirst());
+
+        final HashSet<String> reviewColumnHashSet = new HashSet<String>();
+        reviewColumnHashSet.add(MovieContract.ReviewEntry._ID);
+        reviewColumnHashSet.add(MovieContract.ReviewEntry.COLUMN_MOVIE_ID);
+        reviewColumnHashSet.add(MovieContract.ReviewEntry.COLUMN_REVIEW_ID);
+        reviewColumnHashSet.add(MovieContract.ReviewEntry.COLUMN_REVIEW_AUTHOR);
+        reviewColumnHashSet.add(MovieContract.ReviewEntry.COLUMN_REVIEW_CONTENT);
+        reviewColumnHashSet.add(MovieContract.ReviewEntry.COLUMN_REVIEW_URL);
+
+        int reviewColumnIndex = c.getColumnIndex("name");
+        do {
+            String columnName = c.getString(reviewColumnIndex);
+            reviewColumnHashSet.remove(columnName);
+        } while (c.moveToNext());
+
+        assertTrue("Error: The database doesn't contain all the designed movie entry columns ",
+                reviewColumnHashSet.isEmpty());
 
         db.close();
     }
@@ -109,10 +131,6 @@ public class TestDb extends AndroidTestCase {
                     testValue);
         }
 
-        /*sqLiteDatabase.insert(MovieContract.TrailerEntry.TABLE_NAME,
-                null,
-                testTrailerValues);*/
-
         Cursor cursor = sqLiteDatabase.query(MovieContract.TrailerEntry.TABLE_NAME,
                 null,
                 null,
@@ -134,7 +152,44 @@ public class TestDb extends AndroidTestCase {
 
         cursor.close();
         sqLiteDatabase.close();
+    }
 
+    public void testReviewTable() {
+        MovieDbHelper db = new MovieDbHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = db.getWritableDatabase();
+        long movieId = insertMovie();
+        assertTrue("Error: Movie not insert correctly", movieId == 102899);
+
+        Vector<ContentValues> testReviewValues = TestUtilities.createAntManReviewValues(movieId);
+        //ContentValues testTrailerValues = TestUtilities.createAntManTrailerValues(movieId);
+
+        for (ContentValues testValue : testReviewValues) {
+            sqLiteDatabase.insert(MovieContract.ReviewEntry.TABLE_NAME,
+                    null,
+                    testValue);
+        }
+
+        Cursor cursor = sqLiteDatabase.query(MovieContract.ReviewEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        assertTrue("Error: no records found from review query", cursor.moveToFirst());
+
+        ContentValues[] testValues = new ContentValues[testReviewValues.size()];
+        testReviewValues.toArray(testValues);
+
+        int testValuesIndex = 0;
+        do {
+            TestUtilities.validateCurrentRecord("Failed to validate review insert" , cursor, testValues[testValuesIndex]);
+            testValuesIndex++;
+        } while (cursor.moveToNext());
+
+        cursor.close();
+        sqLiteDatabase.close();
     }
 
     public long insertMovie() {

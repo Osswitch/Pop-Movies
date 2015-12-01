@@ -116,8 +116,8 @@ public class TestProvider extends AndroidTestCase {
         assertEquals("Error: the TrailerEntry CONTENT_URI with movie id should return TrailerEntry.CONTENT_TYPE",
                 MovieContract.TrailerEntry.CONTENT_TYPE, type);
 
-        String testTrailerName = "First Look";
-        type = mContext.getContentResolver().getType(MovieContract.TrailerEntry.buildTrailerWithMovieIdAndTrailerName(testMovieId, testTrailerName));
+        String testTrailerId = "12345";
+        type = mContext.getContentResolver().getType(MovieContract.TrailerEntry.buildTrailerWithMovieIdAndTrailerId(testMovieId, testTrailerId));
         assertEquals("Error: the TrailerEntry CONTENT_URI with movie id and trailer name should return TrailerEntry.CONTENT_ITEM_TYPE",
                 MovieContract.TrailerEntry.CONTENT_ITEM_TYPE, type);
     }
@@ -210,7 +210,7 @@ public class TestProvider extends AndroidTestCase {
         } while (cursor.moveToNext());
 
         cursor = mContext.getContentResolver().query(
-                MovieContract.TrailerEntry.buildTrailerWithMovieIdAndTrailerName(102899, "First look"),
+                MovieContract.TrailerEntry.buildTrailerWithMovieIdAndTrailerId(102899, "12345"),
                 null,
                 null,
                 null,

@@ -60,10 +60,12 @@ public class TestUtilities extends AndroidTestCase {
         ContentValues trailerValue2 = new ContentValues();
 
         trailerValue1.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
+        trailerValue1.put(MovieContract.TrailerEntry.COLUMN_TRAILER_ID, "12345");
         trailerValue1.put(MovieContract.TrailerEntry.COLUMN_TRAILER_NAME, "First look");
         trailerValue1.put(MovieContract.TrailerEntry.COLUMN_TRAILER_PATH, "xInh3VhAWs8");
 
         trailerValue2.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
+        trailerValue2.put(MovieContract.TrailerEntry.COLUMN_TRAILER_ID, "23456");
         trailerValue2.put(MovieContract.TrailerEntry.COLUMN_TRAILER_NAME, "Official Trailer");
         trailerValue2.put(MovieContract.TrailerEntry.COLUMN_TRAILER_PATH, "pWdKf3MneyI");
 
@@ -71,6 +73,31 @@ public class TestUtilities extends AndroidTestCase {
         trailerValues.add(trailerValue2);
 
         return trailerValues;
+    }
+
+    static Vector<ContentValues> createAntManReviewValues(long movieId) {
+        Vector<ContentValues> reviewValues = new Vector<ContentValues>();
+
+        ContentValues reviewValue1 = new ContentValues();
+        ContentValues reviewValue2 = new ContentValues();
+
+        reviewValue1.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID, movieId);
+        reviewValue1.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID, "55d5a00792514102cf0041f2");
+        reviewValue1.put(MovieContract.ReviewEntry.COLUMN_REVIEW_AUTHOR, "owen333");
+        reviewValue1.put(MovieContract.ReviewEntry.COLUMN_REVIEW_CONTENT, "I loved it it was so " +
+                "much fun and very funny, another marvel masterpiece");
+        reviewValue1.put(MovieContract.ReviewEntry.COLUMN_REVIEW_URL, "http://j.mp/1MzokBf");
+
+        reviewValue2.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID, movieId);
+        reviewValue2.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID, "55dabef092514143f3006a24");
+        reviewValue2.put(MovieContract.ReviewEntry.COLUMN_REVIEW_AUTHOR, "Amirbabaii");
+        reviewValue2.put(MovieContract.ReviewEntry.COLUMN_REVIEW_CONTENT, "چجوری بایددانلودکنم فیلم رو");
+        reviewValue2.put(MovieContract.ReviewEntry.COLUMN_REVIEW_URL, "http://j.mp/1hV8UMD");
+
+        reviewValues.add(reviewValue1);
+        reviewValues.add(reviewValue2);
+
+        return reviewValues;
     }
 
 
