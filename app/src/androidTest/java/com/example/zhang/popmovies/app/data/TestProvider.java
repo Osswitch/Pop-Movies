@@ -130,8 +130,6 @@ public class TestProvider extends AndroidTestCase {
         long movieRowId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, testValues);
         assertTrue("Unable to insert Ant-Man into the Database", movieRowId != -1);
 
-        db.close();
-
         Cursor movieCursor = mContext.getContentResolver().query(
                 MovieContract.MovieEntry.CONTENT_URI,
                 null,
@@ -142,6 +140,22 @@ public class TestProvider extends AndroidTestCase {
         );
 
         TestUtilities.validateCursor("testMovieQuery", movieCursor, testValues);
+
+        movieCursor = mContext.getContentResolver().query(
+                MovieContract.MovieEntry.buildMovieWithMovieId(102899),
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        TestUtilities.validateCursor("testMovieQuery", movieCursor, testValues);
+
+        movieCursor.close();
+        db.close();
+
+
     }
 
     public void testBasicTrailerQuery() {
@@ -159,8 +173,8 @@ public class TestProvider extends AndroidTestCase {
                     testValue);
         }
 
-        Cursor cursor = sqLiteDatabase.query(MovieContract.TrailerEntry.TABLE_NAME,
-                null,
+        Cursor cursor = mContext.getContentResolver().query(
+                MovieContract.TrailerEntry.CONTENT_URI,
                 null,
                 null,
                 null,
@@ -177,6 +191,38 @@ public class TestProvider extends AndroidTestCase {
             TestUtilities.validateCurrentRecord("Failed to validate trailer insert" , cursor, testValues[testValuesIndex]);
             testValuesIndex++;
         } while (cursor.moveToNext());
+
+        cursor = mContext.getContentResolver().query(
+                MovieContract.TrailerEntry.buildTrailerWithMovieId(102899),
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        assertTrue("Error: no records found from trailer query", cursor.moveToFirst());
+
+        testValuesIndex = 0;
+        do {
+            TestUtilities.validateCurrentRecord("Failed to validate trailer with movie id query" , cursor, testValues[testValuesIndex]);
+            testValuesIndex++;
+        } while (cursor.moveToNext());
+
+        cursor = mContext.getContentResolver().query(
+                MovieContract.TrailerEntry.buildTrailerWithMovieIdAndTrailerName(102899, "First look"),
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        assertTrue("Error: no records found from trailer with movie id and trailer name query",
+                cursor.moveToFirst());
+
+        TestUtilities.validateCurrentRecord("Failed to validate trailer with movie id and trailer name query",
+                cursor, testValues[0]);
 
         cursor.close();
         sqLiteDatabase.close();
