@@ -120,6 +120,19 @@ public class TestProvider extends AndroidTestCase {
         type = mContext.getContentResolver().getType(MovieContract.TrailerEntry.buildTrailerWithMovieIdAndTrailerId(testMovieId, testTrailerId));
         assertEquals("Error: the TrailerEntry CONTENT_URI with movie id and trailer name should return TrailerEntry.CONTENT_ITEM_TYPE",
                 MovieContract.TrailerEntry.CONTENT_ITEM_TYPE, type);
+
+        type = mContext.getContentResolver().getType(MovieContract.ReviewEntry.CONTENT_URI);
+        assertEquals("Error: the ReviewEntry CONTENT_URI should return ReviewEntry.CONTENT_TYPE",
+                MovieContract.ReviewEntry.CONTENT_TYPE, type);
+
+        type = mContext.getContentResolver().getType(MovieContract.ReviewEntry.buildReviewWithMovieId(testMovieId));
+        assertEquals("Error: the ReviewEntry CONTENT_URI with movie id should return ReviewEntry.CONTENT_TYPE",
+                MovieContract.ReviewEntry.CONTENT_TYPE, type);
+
+        String testReviewId = "23456";
+        type = mContext.getContentResolver().getType(MovieContract.ReviewEntry.buildReviewWithMovieIdAndReviewId(testMovieId, testReviewId));
+        assertEquals("Error: the ReviewEntry CONTENT_URI with movie id and review id should return ReviewEntry.CONTENT_ITEM_TYPE",
+                MovieContract.ReviewEntry.CONTENT_ITEM_TYPE, type);
     }
 
     public void testBasicMovieQuery() {
