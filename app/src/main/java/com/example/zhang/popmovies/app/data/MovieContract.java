@@ -113,5 +113,10 @@ public class MovieContract {
         public static Uri buildReviewWithMovieId(long movieId) {
             return CONTENT_URI.buildUpon().appendPath(Long.toString(movieId)).build();
         }
+
+        public static Uri buildReviewWithMovieIdAndReviewId (long movieId, String reviewId) {
+            return CONTENT_URI.buildUpon().appendPath(Long.toString(movieId))
+                    .appendPath(reviewId).build();
+        }
     }
 }

@@ -91,9 +91,14 @@ public class MovieProvider extends ContentProvider {
         final String authority = MovieContract.CONTENT_AUTHORITY;
         mUriMatcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
         mUriMatcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_WITH_MOVIE_ID);
+
         mUriMatcher.addURI(authority, MovieContract.PATH_TRAILER, TRAILER);
         mUriMatcher.addURI(authority, MovieContract.PATH_TRAILER + "/#", TRAILER_WITH_MOVIE_ID);
         mUriMatcher.addURI(authority, MovieContract.PATH_TRAILER + "/#/*", TRAILER_WITH_MOVIE_ID_AND_TRAILER_ID);
+
+        mUriMatcher.addURI(authority, MovieContract.PATH_REVIEW, REVIEW);
+        mUriMatcher.addURI(authority, MovieContract.PATH_REVIEW + "/#", REVIEW_WITH_MOVIE_ID);
+        mUriMatcher.addURI(authority, MovieContract.PATH_REVIEW + "/#/*", REVIEW_WITH_MOVIE_ID_AND_REVIEW_ID);
         return mUriMatcher;
     }
 
@@ -162,6 +167,12 @@ public class MovieProvider extends ContentProvider {
                 return MovieContract.TrailerEntry.CONTENT_TYPE;
             case TRAILER_WITH_MOVIE_ID_AND_TRAILER_ID:
                 return MovieContract.TrailerEntry.CONTENT_ITEM_TYPE;
+            case REVIEW:
+                return MovieContract.ReviewEntry.CONTENT_TYPE;
+            case REVIEW_WITH_MOVIE_ID:
+                return MovieContract.ReviewEntry.CONTENT_TYPE;
+            case REVIEW_WITH_MOVIE_ID_AND_REVIEW_ID:
+                return MovieContract.ReviewEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
