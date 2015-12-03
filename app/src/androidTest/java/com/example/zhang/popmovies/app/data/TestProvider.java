@@ -242,6 +242,77 @@ public class TestProvider extends AndroidTestCase {
 
     }
 
+    public void testBasicReviewQuery() {
+        MovieDbHelper dbHelper = new MovieDbHelper(mContext);
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+
+        long movieId = TestUtilities.insertAntManValues(mContext);
+        assertTrue("Error: Movie not insert correctly", movieId == 102899);
+
+        Vector<ContentValues> testReviewValues = TestUtilities.createAntManReviewValues(movieId);
+
+        for (ContentValues testValue : testReviewValues) {
+            sqLiteDatabase.insert(MovieContract.ReviewEntry.TABLE_NAME,
+                    null,
+                    testValue);
+        }
+
+        Cursor cursor = mContext.getContentResolver().query(
+                MovieContract.ReviewEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        assertTrue("Error: no records found from review query", cursor.moveToFirst());
+
+        ContentValues[] testValues = new ContentValues[testReviewValues.size()];
+        testReviewValues.toArray(testValues);
+
+        int testValuesIndex = 0;
+        do {
+            TestUtilities.validateCurrentRecord("Failed to validate review insert" , cursor, testValues[testValuesIndex]);
+            testValuesIndex++;
+        } while (cursor.moveToNext());
+
+        cursor = mContext.getContentResolver().query(
+                MovieContract.ReviewEntry.buildReviewWithMovieId(102899),
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        assertTrue("Error: no records found from review query", cursor.moveToFirst());
+
+        testValuesIndex = 0;
+        do {
+            TestUtilities.validateCurrentRecord("Failed to validate review with movie id query" , cursor, testValues[testValuesIndex]);
+            testValuesIndex++;
+        } while (cursor.moveToNext());
+
+        cursor = mContext.getContentResolver().query(
+                MovieContract.ReviewEntry.buildReviewWithMovieIdAndReviewId(102899, "55d5a00792514102cf0041f2"),
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        assertTrue("Error: no records found from review with movie id and trailer name query",
+                cursor.moveToFirst());
+
+        TestUtilities.validateCurrentRecord("Failed to validate trailer with movie id and trailer name query",
+                cursor, testValues[0]);
+
+        cursor.close();
+        sqLiteDatabase.close();
+
+    }
+
     public void testInsertReadProvider() {
         ContentValues testValue = TestUtilities.createAntManValues();
         TestUtilities.TestContentObserver testContentObserver

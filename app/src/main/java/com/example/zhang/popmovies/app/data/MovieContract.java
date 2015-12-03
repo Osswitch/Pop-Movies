@@ -118,5 +118,13 @@ public class MovieContract {
             return CONTENT_URI.buildUpon().appendPath(Long.toString(movieId))
                     .appendPath(reviewId).build();
         }
+
+        public static Long getMovieIdFromUri (Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(1));
+        }
+
+        public static String getReviewIdFromUri (Uri uri) {
+            return uri.getPathSegments().get(2);
+        }
     }
 }
