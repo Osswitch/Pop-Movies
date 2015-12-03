@@ -382,6 +382,28 @@ public class MovieProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
                 return returnCount;
             }
+
+            case REVIEW: {
+                db.beginTransaction();;
+                int returnCount = 0;
+                try {
+                    for (ContentValues values : contentValues) {
+                        long _id = db.insert(
+                                MovieContract.ReviewEntry.TABLE_NAME,
+                                null,
+                                values
+                        );
+                        if (_id != -1) {
+                            returnCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return returnCount;
+            }
             default:
                 return super.bulkInsert(uri, contentValues);
         }
