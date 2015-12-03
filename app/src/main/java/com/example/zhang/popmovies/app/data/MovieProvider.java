@@ -263,6 +263,14 @@ public class MovieProvider extends ContentProvider {
                 }
                 break;
             }
+            case REVIEW: {
+                long _id = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, values);
+                if (_id > 0) {
+                    returnUri = MovieContract.ReviewEntry.buildReviewUri(_id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+            }
             default:
                 throw new UnsupportedOperationException("Failed to insert row into " + uri);
         }
@@ -294,6 +302,13 @@ public class MovieProvider extends ContentProvider {
                         selectionArgs
                 );
                 break;
+            case REVIEW:
+                rowsDeleted = db.delete(
+                        MovieContract.ReviewEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                );
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri " + uri);
         }
@@ -321,6 +336,15 @@ public class MovieProvider extends ContentProvider {
             case TRAILER: {
                 rowsUpdated = db.update(
                         MovieContract.TrailerEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs
+                );
+                break;
+            }
+            case REVIEW: {
+                rowsUpdated = db.update(
+                        MovieContract.ReviewEntry.TABLE_NAME,
                         values,
                         selection,
                         selectionArgs
