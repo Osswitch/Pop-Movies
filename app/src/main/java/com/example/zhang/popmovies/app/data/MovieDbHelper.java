@@ -29,6 +29,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 + MovieContract.MovieEntry.COLUMN_POPULARITY + " REAL NOT NULL, "
                 + MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL, "
                 + MovieContract.MovieEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL, "
+                + MovieContract.MovieEntry.COLUMN_IS_POPULARITY + " INTEGER DEFAULT 0, "
+                + MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + " INTEGER DEFAULT 0, "
                 + MovieContract.MovieEntry.COLUMN_IS_FAVOURITE + " INTEGER DEFAULT 0, "
                 + "UNIQUE (" + MovieContract.MovieEntry.COLUMN_MOVIE_ID
                 + ") ON CONFLICT REPLACE);";

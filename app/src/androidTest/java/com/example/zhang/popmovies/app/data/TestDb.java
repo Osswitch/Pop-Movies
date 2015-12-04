@@ -58,6 +58,8 @@ public class TestDb extends AndroidTestCase {
         movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_POPULARITY);
         movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE);
         movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_VOTE_COUNT);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_IS_POPULARITY);
+        movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE);
         movieColumnHashSet.add(MovieContract.MovieEntry.COLUMN_IS_FAVOURITE);
 
         int movieColumnIndex = c.getColumnIndex("name");

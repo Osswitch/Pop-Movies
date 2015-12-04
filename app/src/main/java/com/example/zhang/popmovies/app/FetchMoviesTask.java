@@ -45,7 +45,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
     }
 
     //Get poster uri from json
-    private String[] getMovieFromJson(String resultJSONStr)
+    private String[] getMovieFromJson(String resultJSONStr, String sortMethod)
             throws JSONException {
 
         final String MDB_RESULTS = "results";
@@ -64,8 +64,14 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
             int perPageMovieCounts = resultArray.length();
             Vector<ContentValues> contentValuesVector = new Vector<ContentValues>(perPageMovieCounts);
 
+            // Restore every movie id from json in use of update movies.
+            String[] sSelectionArgs = new String[perPageMovieCounts];
+
             for (int i = 0; i < perPageMovieCounts; i++) {
                 JSONObject movieObject = resultArray.getJSONObject(i);
+
+                sSelectionArgs[i] = Integer.toString(movieObject.getInt(MDB_ID));
+
                 ContentValues movieValues = new ContentValues();
                 movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID,
                         movieObject.getInt(MDB_ID));
@@ -83,6 +89,11 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                         movieObject.getLong(MDB_VOTE_AVERAGE));
                 movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT,
                         movieObject.getInt(MDB_VOTE_COUNT));
+                if (sortMethod == mContext.getString(R.string.sort_entryValue_popularity)) {
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_IS_POPULARITY, 1);
+                } else if (sortMethod == mContext.getString(R.string.sort_entryValue_highestRate)) {
+                    movieValues.put(MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE, 1);
+                }
                 contentValuesVector.add(movieValues);
             }
 
@@ -103,6 +114,57 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                 mContext.getContentResolver().bulkInsert(
                         MovieContract.MovieEntry.CONTENT_URI,
                         contentValues);
+
+                String sSelection = null;
+                String sAppendSelection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?)";
+
+                ContentValues updateValues = new ContentValues();
+
+                if (sortMethod == mContext.getString(R.string.sort_entryValue_popularity)) {
+                    updateValues.put(MovieContract.MovieEntry.COLUMN_IS_POPULARITY, 1);
+
+                    sSelection = MovieContract.MovieEntry.COLUMN_IS_POPULARITY + "=1 AND ("
+                    + sAppendSelection;
+
+                    mContext.getContentResolver().update(
+                            MovieContract.MovieEntry.CONTENT_URI,
+                            updateValues,
+                            sSelection,
+                            sSelectionArgs
+                    );
+                } else if (sortMethod == mContext.getString(R.string.sort_entryValue_highestRate)) {
+                    updateValues.put(MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE, 1);
+
+                    sSelection = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + "=1 AND ("
+                    +sAppendSelection;
+
+                    mContext.getContentResolver().update(
+                            MovieContract.MovieEntry.CONTENT_URI,
+                            updateValues,
+                            sSelection,
+                            sSelectionArgs
+                    );
+                }
+
             }
 
             cursor = mContext.getContentResolver().query(
@@ -156,7 +218,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
             final String API_KEY_PARAM = "api_key";
             Uri uri = null;
 
-            if (sortMethod == mContext.getString(R.string.sort_entries_popularity)) {
+            if (sortMethod == mContext.getString(R.string.sort_entryValue_popularity)) {
                 uri = Uri.parse(FETCH_BASE_URI).buildUpon()
                         .appendPath(method)
                         .appendPath(category)
@@ -224,7 +286,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         }
 
         try {
-            String[] posterPaths = getMovieFromJson(resultJSONStr);
+            String[] posterPaths = getMovieFromJson(resultJSONStr, sortMethod);
             return  posterPaths;
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);

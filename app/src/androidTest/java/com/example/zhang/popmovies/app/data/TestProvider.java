@@ -364,9 +364,13 @@ public class TestProvider extends AndroidTestCase {
         assertTrue(movieRowId != -1);
         Log.d(LOG_TAG, "new row id: " + movieRowId);
 
-        ContentValues updatedValues = new ContentValues(testValues);
+        ContentValues updatedValues = new ContentValues();
         updatedValues.put(MovieContract.MovieEntry._ID, movieRowId);
         updatedValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, "THE ANT MAN");
+
+        ContentValues newValues = new ContentValues(testValues);
+        newValues.put(MovieContract.MovieEntry._ID, movieRowId);
+        newValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, "THE ANT MAN");
 
         Cursor movieCursor = mContext.getContentResolver().query(
                 MovieContract.MovieEntry.CONTENT_URI,
@@ -403,7 +407,7 @@ public class TestProvider extends AndroidTestCase {
         );
         TestUtilities.validateCursor("testUpdateMovie. Error validating movie entry update.",
                 cursor,
-                updatedValues);
+                newValues);
         cursor.close();
     }
 }
