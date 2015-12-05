@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class MovieDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public static final String DATABASE_NAME = "movie.db";
 
@@ -33,7 +33,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 + MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + " INTEGER DEFAULT 0, "
                 + MovieContract.MovieEntry.COLUMN_IS_FAVOURITE + " INTEGER DEFAULT 0, "
                 + "UNIQUE (" + MovieContract.MovieEntry.COLUMN_MOVIE_ID
-                + ") ON CONFLICT REPLACE);";
+                + "));";
 
         final String SQL_CREATE_TRAILER_TABLE = "CREATE TABLE "
                 + MovieContract.TrailerEntry.TABLE_NAME
@@ -60,7 +60,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 + MovieContract.MovieEntry.TABLE_NAME + " ("
                 + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "), "
                 + "UNIQUE (" + MovieContract.ReviewEntry.COLUMN_REVIEW_ID
-                + ") ON CONFLICT REPLACE);";
+                + "));";
 
         db.execSQL(SQL_CREATE_MOVIE_TABLE);
         db.execSQL(SQL_CREATE_TRAILER_TABLE);
@@ -70,9 +70,9 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL("DROP TABLE IF EXIST " + MovieContract.MovieEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXIST " + MovieContract.TrailerEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXIST " + MovieContract.ReviewEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MovieContract.TrailerEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MovieContract.ReviewEntry.TABLE_NAME);
         onCreate(db);
 
     }

@@ -250,7 +250,13 @@ public class MovieProvider extends ContentProvider {
                 if (_id > 0) {
                     returnUri = MovieContract.MovieEntry.buildMovieUri(_id);
                 } else {
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    _id = db.update(
+                            MovieContract.MovieEntry.TABLE_NAME,
+                            values,
+                            sMovieWithMovieIdSelection,
+                            new String[]{values.getAsString(MovieContract.MovieEntry.COLUMN_MOVIE_ID)}
+                    );
+                    returnUri = MovieContract.MovieEntry.buildMovieUri(_id);
                 }
                 break;
             }
@@ -375,6 +381,16 @@ public class MovieProvider extends ContentProvider {
                                 values);
                         if (_id != -1) {
                             returnCount++;
+                        } else {
+                            _id = db.update(
+                                    MovieContract.MovieEntry.TABLE_NAME,
+                                    values,
+                                    sMovieWithMovieIdSelection,
+                                    new String[]{values.getAsString(MovieContract.MovieEntry.COLUMN_MOVIE_ID)}
+                            );
+                            if (_id != -1) {
+                                returnCount++;
+                            }
                         }
                     }
                     db.setTransactionSuccessful();
