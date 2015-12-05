@@ -117,35 +117,33 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                         MovieContract.MovieEntry.CONTENT_URI,
                         contentValues);
 
-                String sSelection = null;
-                String sAppendSelection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=?)";
+                String sSelection = "("
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? AND "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID
+                        + "!=?)";
 
                 ContentValues updateValues = new ContentValues();
 
                 if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_popularity))) {
-                    updateValues.put(MovieContract.MovieEntry.COLUMN_IS_POPULARITY, 1);
-
-                    sSelection = MovieContract.MovieEntry.COLUMN_IS_POPULARITY + "=1 AND ("
-                    + sAppendSelection;
+                    updateValues.put(MovieContract.MovieEntry.COLUMN_IS_POPULARITY, 0);
 
                     mContext.getContentResolver().update(
                             MovieContract.MovieEntry.CONTENT_URI,
@@ -154,10 +152,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                             sSelectionArgs
                     );
                 } else if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_highestRate))) {
-                    updateValues.put(MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE, 1);
-
-                    sSelection = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + "=1 AND ("
-                    +sAppendSelection;
+                    updateValues.put(MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE, 0);
 
                     mContext.getContentResolver().update(
                             MovieContract.MovieEntry.CONTENT_URI,
