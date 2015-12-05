@@ -84,16 +84,18 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                 movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH,
                         movieObject.getString(MDB_POSTER_PATH));
                 movieValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY,
-                        movieObject.getLong(MDB_POPULARITY));
+                        movieObject.getDouble(MDB_POPULARITY));
                 movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
-                        movieObject.getLong(MDB_VOTE_AVERAGE));
+                        movieObject.getDouble(MDB_VOTE_AVERAGE));
                 movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT,
                         movieObject.getInt(MDB_VOTE_COUNT));
-                if (sortMethod == mContext.getString(R.string.sort_entryValue_popularity)) {
+
+                if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_popularity))) {
                     movieValues.put(MovieContract.MovieEntry.COLUMN_IS_POPULARITY, 1);
-                } else if (sortMethod == mContext.getString(R.string.sort_entryValue_highestRate)) {
+                } else if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_highestRate))) {
                     movieValues.put(MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE, 1);
                 }
+
                 contentValuesVector.add(movieValues);
             }
 
@@ -116,30 +118,30 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                         contentValues);
 
                 String sSelection = null;
-                String sAppendSelection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=? OR "
-                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?)";
+                String sAppendSelection = MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=? OR "
+                        + MovieContract.MovieEntry.COLUMN_MOVIE_ID + "!=?)";
 
                 ContentValues updateValues = new ContentValues();
 
-                if (sortMethod == mContext.getString(R.string.sort_entryValue_popularity)) {
+                if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_popularity))) {
                     updateValues.put(MovieContract.MovieEntry.COLUMN_IS_POPULARITY, 1);
 
                     sSelection = MovieContract.MovieEntry.COLUMN_IS_POPULARITY + "=1 AND ("
@@ -151,7 +153,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                             sSelection,
                             sSelectionArgs
                     );
-                } else if (sortMethod == mContext.getString(R.string.sort_entryValue_highestRate)) {
+                } else if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_highestRate))) {
                     updateValues.put(MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE, 1);
 
                     sSelection = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + "=1 AND ("
@@ -175,9 +177,17 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                     null
                     );
 
+            cursor.moveToFirst();
+            do {
+                Log.d(LOG_TAG, "cursor test."
+                        + cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE))
+                + " ispopularity " + cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_IS_POPULARITY))
+                + " ishigh " + cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE)));
+            } while (cursor.moveToNext());
 
             Log.d(LOG_TAG, "Fetch movie task complete. "
-                    + (cursor.getCount() - storedMovieNum) + " New Movies Inserted");
+                    + (cursor.getCount() - storedMovieNum) + " New Movies Inserted ");
+
             cursor.close();
 
             String[] posterPaths;
@@ -218,7 +228,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
             final String API_KEY_PARAM = "api_key";
             Uri uri = null;
 
-            if (sortMethod == mContext.getString(R.string.sort_entryValue_popularity)) {
+            if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_popularity))) {
                 uri = Uri.parse(FETCH_BASE_URI).buildUpon()
                         .appendPath(method)
                         .appendPath(category)
