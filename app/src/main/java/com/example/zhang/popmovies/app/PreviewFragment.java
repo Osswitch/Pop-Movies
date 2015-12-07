@@ -1,8 +1,6 @@
 package com.example.zhang.popmovies.app;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,10 +57,7 @@ public class PreviewFragment extends Fragment {
 
     public void updateMovies() {
         //Read sort order method
-        SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(getActivity());
-        String sortMethod = sharedPreferences.getString(getString(R.string.pref_sort_key),
-                getString(R.string.pref_sort_defValue));
+        String sortMethod = Utility.getPreferredSortMethod(getActivity());
         new FetchMoviesTask(getActivity(), mPreviewAdapter).execute(sortMethod);
     }
 
