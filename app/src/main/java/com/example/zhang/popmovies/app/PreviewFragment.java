@@ -80,12 +80,14 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
 
         String sPreviewSelection = null;
 
-        String sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
+        String sortOrder = null;
 
         if (sortMethod.equals(getString(R.string.sort_entryValue_popularity))) {
             sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_POPULARITY + "=?";
+            sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
         } else if (sortMethod.equals(getString(R.string.sort_entryValue_highestRate))) {
             sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + "=?";
+            sortOrder = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + " DESC";
         }
 
         return new CursorLoader(
