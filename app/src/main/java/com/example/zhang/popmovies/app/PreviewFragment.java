@@ -25,7 +25,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     private MovieAdapter mMovieAdapter = null;
 
     private static final String[] PREVIEW_COLUMNS = {
-            MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry._ID,   //necessary for CursorAdapter
             MovieContract.MovieEntry.COLUMN_POSTER_PATH
     };
 
