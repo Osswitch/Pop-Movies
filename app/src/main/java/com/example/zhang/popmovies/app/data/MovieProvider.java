@@ -246,18 +246,33 @@ public class MovieProvider extends ContentProvider {
 
         switch (match) {
             case MOVIE: {
-                long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
-                if (_id > 0) {
-                    returnUri = MovieContract.MovieEntry.buildMovieUri(_id);
-                } else {
-                    _id = db.update(
+                String movieId = values.getAsString(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
+                Cursor retCursor = db.query(
+                        MovieContract.MovieEntry.TABLE_NAME,
+                        new String[]{MovieContract.MovieEntry.COLUMN_MOVIE_ID},
+                        sMovieWithMovieIdSelection,
+                        new String[]{movieId},
+                        null,
+                        null,
+                        null
+                        );
+                if (retCursor.moveToFirst()){
+                    long _id = db.update(
                             MovieContract.MovieEntry.TABLE_NAME,
                             values,
                             sMovieWithMovieIdSelection,
-                            new String[]{values.getAsString(MovieContract.MovieEntry.COLUMN_MOVIE_ID)}
+                            new String[]{movieId}
                     );
                     returnUri = MovieContract.MovieEntry.buildMovieUri(_id);
+                } else {
+                    long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
+                    if (_id > 0) {
+                        returnUri = MovieContract.MovieEntry.buildMovieUri(_id);
+                    } else {
+                        throw new android.database.SQLException("Failed to insert row " + uri);
+                    }
                 }
+
                 break;
             }
             case TRAILER: {
@@ -376,20 +391,32 @@ public class MovieProvider extends ContentProvider {
                 int returnCount = 0;
                 try {
                     for (ContentValues values : contentValues) {
-                        long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME,
+                        String movieId = values.getAsString(MovieContract.MovieEntry.COLUMN_MOVIE_ID);
+                        Cursor retCursor = db.query(
+                                MovieContract.MovieEntry.TABLE_NAME,
+                                new String[]{MovieContract.MovieEntry.COLUMN_MOVIE_ID},
+                                sMovieWithMovieIdSelection,
+                                new String[]{movieId},
                                 null,
-                                values);
-                        if (_id != -1) {
-                            returnCount++;
-                        } else {
-                            _id = db.update(
+                                null,
+                                null
+                        );
+                        if (retCursor.moveToFirst()){
+                            long _id = db.update(
                                     MovieContract.MovieEntry.TABLE_NAME,
                                     values,
                                     sMovieWithMovieIdSelection,
-                                    new String[]{values.getAsString(MovieContract.MovieEntry.COLUMN_MOVIE_ID)}
+                                    new String[]{movieId}
                             );
-                            if (_id != -1) {
+                            if (_id > 0){
                                 returnCount++;
+                            }
+                        } else {
+                            long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
+                            if (_id > 0) {
+                                returnCount++;
+                            } else {
+                                throw new android.database.SQLException("Failed to insert row " + uri);
                             }
                         }
                     }

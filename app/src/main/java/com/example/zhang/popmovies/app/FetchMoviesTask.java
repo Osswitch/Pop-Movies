@@ -172,14 +172,6 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                     null
                     );
 
-            cursor.moveToFirst();
-            do {
-                Log.d(LOG_TAG, "cursor test."
-                        + cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE))
-                + " ispopularity " + cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_IS_POPULARITY))
-                + " ishigh " + cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE)));
-            } while (cursor.moveToNext());
-
             Log.d(LOG_TAG, "Fetch movie task complete. "
                     + (cursor.getCount() - storedMovieNum) + " New Movies Inserted ");
 
