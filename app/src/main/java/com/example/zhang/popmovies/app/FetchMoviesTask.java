@@ -24,28 +24,18 @@ import java.util.Vector;
 /**
  * Created by zhang on 24/11/15.
  */
-public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
+public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
-    private PreviewAdapter mPreviewAdapter;
     private final Context mContext;
 
-    public FetchMoviesTask(Context context, PreviewAdapter previewAdapter) {
+    public FetchMoviesTask(Context context) {
         mContext = context;
-        mPreviewAdapter = previewAdapter;
     }
 
-    private String[] convertContentValueToUXFormat(Vector<ContentValues> contentValuesVector) {
-        String[] retPostPaths = new String[contentValuesVector.size()];
-        for (int i = 0; i < contentValuesVector.size(); i++) {
-            ContentValues movieValues = contentValuesVector.elementAt(i);
-            retPostPaths[i] = movieValues.getAsString(MovieContract.MovieEntry.COLUMN_POSTER_PATH);
-        }
-        return retPostPaths;
-    }
 
     //Get poster uri from json
-    private String[] getMovieFromJson(String resultJSONStr, String sortMethod)
+    private void getMovieFromJson(String resultJSONStr, String sortMethod)
             throws JSONException {
 
         final String MDB_RESULTS = "results";
@@ -177,19 +167,14 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
 
             cursor.close();
 
-            String[] posterPaths;
-            posterPaths = convertContentValueToUXFormat(contentValuesVector);
-
-            return posterPaths;
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
-        return null;
     }
 
     @Override
-    protected String[]doInBackground(String... params) {
+    protected Void doInBackground(String... params) {
 
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -265,10 +250,14 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
             }
 
             resultJSONStr = buffer.toString();
+            getMovieFromJson(resultJSONStr, sortMethod);
 
-        }catch(IOException e){
+        } catch(IOException e) {
             Log.e(LOG_TAG, "error", e);
-        }finally {
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        } finally {
             if (urlConnection != null){
                 urlConnection.disconnect();
             }
@@ -277,27 +266,11 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error", e);
+                    Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
         }
-
-        try {
-            String[] posterPaths = getMovieFromJson(resultJSONStr, sortMethod);
-            return  posterPaths;
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-        }
         return null;
-    }
-
-    @Override
-    protected void onPostExecute(String[] posterPaths) {
-
-        if (posterPaths != null) {
-            mPreviewAdapter.clear();
-            mPreviewAdapter.addAll(posterPaths);
-        }
     }
 
 }
