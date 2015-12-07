@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
-import com.example.zhang.popmovies.app.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -35,7 +34,7 @@ public class MovieAdapter extends CursorAdapter {
         final String IMAGE_BASE_URI = "http://image.tmdb.org/t/p";
         final String IMAGE_SIZE = "w500";
 
-        String posterPath = cursor.getString(cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER_PATH));
+        String posterPath = cursor.getString(PreviewFragment.COL_PREVIEW_PATH);
 
         Uri previewImageUri = Uri.parse(IMAGE_BASE_URI).buildUpon()
                 .appendEncodedPath(IMAGE_SIZE)

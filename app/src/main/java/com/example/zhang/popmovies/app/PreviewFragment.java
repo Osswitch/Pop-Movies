@@ -24,6 +24,14 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     private static final int FETCH_PREVIEW_MOVIE_LOADER_ID = 0;
     private MovieAdapter mMovieAdapter = null;
 
+    private static final String[] PREVIEW_COLUMNS = {
+            MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH
+    };
+
+    static final int COL_PREVIEW_ID = 0;
+    static final int COL_PREVIEW_PATH = 1;
+
     public PreviewFragment() {
     }
 
@@ -93,7 +101,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
         return new CursorLoader(
                 getActivity(),
                 MovieContract.MovieEntry.CONTENT_URI,
-                null,
+                PREVIEW_COLUMNS,
                 sPreviewSelection,
                 new String[]{"1"},
                 sortOrder
