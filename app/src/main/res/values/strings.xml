@@ -5,6 +5,8 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
 
+    <string name="action_refresh">Refresh</string>
+
     <!--Sort order settings strings-->
     <string name="pref_sort_title">Sort Order</string>
     <string name="pref_sort_key">sort order</string>

@@ -1,14 +1,15 @@
 package com.example.zhang.popmovies.app;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
 
-import java.util.ArrayList;
+import com.example.zhang.popmovies.app.data.MovieContract;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -17,9 +18,19 @@ public class PreviewFragment extends Fragment {
 
     private final String LOG_TAG = PreviewFragment.class.getSimpleName();
 
-    private PreviewAdapter mPreviewAdapter = null;
+    private MovieAdapter mMovieAdapter = null;
 
     public PreviewFragment() {
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_refresh) {
+            updateMovies();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -28,29 +39,32 @@ public class PreviewFragment extends Fragment {
         //return inflater.inflate(R.layout.fragment_main, container, false);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        String sortMethod = Utility.getPreferredSortMethod(getActivity());
 
-        //String[] fakeData = {"1","2","3","4"};
-        //List<String> fakeList = new ArrayList<String>(Arrays.asList(fakeData));
+        String sPreviewSelection = null;
 
-        mPreviewAdapter = new PreviewAdapter(
+        if (sortMethod.equals(getString(R.string.sort_entryValue_popularity))) {
+            sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_POPULARITY + "=?";
+        } else if (sortMethod.equals(getString(R.string.sort_entryValue_highestRate))) {
+            sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + "=?";
+        }
+
+        Cursor previewCursor = getActivity().getContentResolver().query(
+                MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                sPreviewSelection,
+                new String[]{"1"},
+                MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC"
+        );
+
+        mMovieAdapter = new MovieAdapter(
                 getActivity(),
-                R.layout.grid_item_preview,
-                new ArrayList<String>()
+                previewCursor,
+                0
         );
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridView_preview);
-        gridView.setAdapter(mPreviewAdapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                MovieInfo movieInfo = mPreviewAdapter.getItem(position);
-//                Bundle movieInfoBundle = new Bundle();
-//                movieInfoBundle.putParcelable("movieInfo", movieInfo);
-//                Intent detailIntent = new Intent(getActivity(), MovieDetailActivity.class)
-//                        .putExtras(movieInfoBundle);
-//                startActivity(detailIntent);
-            }
-        });
+        gridView.setAdapter(mMovieAdapter);
 
         return rootView;
     }
@@ -58,7 +72,7 @@ public class PreviewFragment extends Fragment {
     public void updateMovies() {
         //Read sort order method
         String sortMethod = Utility.getPreferredSortMethod(getActivity());
-        new FetchMoviesTask(getActivity(), mPreviewAdapter).execute(sortMethod);
+        new FetchMoviesTask(getActivity()).execute(sortMethod);
     }
 
     @Override
