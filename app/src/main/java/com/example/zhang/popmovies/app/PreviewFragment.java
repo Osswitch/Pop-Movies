@@ -3,6 +3,9 @@ package com.example.zhang.popmovies.app;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,10 +17,11 @@ import com.example.zhang.popmovies.app.data.MovieContract;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PreviewFragment extends Fragment {
+public class PreviewFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private final String LOG_TAG = PreviewFragment.class.getSimpleName();
 
+    private static final int FETCH_PREVIEW_MOVIE_LOADER_ID = 0;
     private MovieAdapter mMovieAdapter = null;
 
     public PreviewFragment() {
@@ -39,27 +43,10 @@ public class PreviewFragment extends Fragment {
         //return inflater.inflate(R.layout.fragment_main, container, false);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        String sortMethod = Utility.getPreferredSortMethod(getActivity());
-
-        String sPreviewSelection = null;
-
-        if (sortMethod.equals(getString(R.string.sort_entryValue_popularity))) {
-            sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_POPULARITY + "=?";
-        } else if (sortMethod.equals(getString(R.string.sort_entryValue_highestRate))) {
-            sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + "=?";
-        }
-
-        Cursor previewCursor = getActivity().getContentResolver().query(
-                MovieContract.MovieEntry.CONTENT_URI,
-                null,
-                sPreviewSelection,
-                new String[]{"1"},
-                MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC"
-        );
 
         mMovieAdapter = new MovieAdapter(
                 getActivity(),
-                previewCursor,
+                null,
                 0
         );
 
@@ -79,5 +66,42 @@ public class PreviewFragment extends Fragment {
     public void onStart() {
         super.onStart();
         updateMovies();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String sortMethod = Utility.getPreferredSortMethod(getActivity());
+
+        String sPreviewSelection = null;
+
+        String sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
+
+        if (sortMethod.equals(getString(R.string.sort_entryValue_popularity))) {
+            sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_POPULARITY + "=?";
+        } else if (sortMethod.equals(getString(R.string.sort_entryValue_highestRate))) {
+            sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + "=?";
+        }
+
+        return new CursorLoader(
+                getActivity(),
+                MovieContract.MovieEntry.CONTENT_URI,
+                null,
+                sPreviewSelection,
+                new String[]{"1"},
+                sortOrder
+
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mMovieAdapter.swapCursor(cursor);
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+        mMovieAdapter.swapCursor(null);
     }
 }
