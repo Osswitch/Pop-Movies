@@ -40,12 +40,6 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(FETCH_PREVIEW_MOVIE_LOADER_ID, null, this);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
@@ -92,16 +86,21 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
         return rootView;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(FETCH_PREVIEW_MOVIE_LOADER_ID, null, this);
+    }
+
+    void onSortMethodChange() {
+        updateMovies();
+        getLoaderManager().restartLoader(FETCH_PREVIEW_MOVIE_LOADER_ID, null, this);
+    }
+
     public void updateMovies() {
         //Read sort order method
         String sortMethod = Utility.getPreferredSortMethod(getActivity());
         new FetchMoviesTask(getActivity()).execute(sortMethod);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateMovies();
     }
 
     @Override

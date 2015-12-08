@@ -8,10 +8,23 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    private static final String PREVIEW_FRAGMENT_TAG = "PFTAG";
+    private String mSortMethod;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mSortMethod = Utility.getPreferredSortMethod(this);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment, new PreviewFragment(), PREVIEW_FRAGMENT_TAG)
+                    .commit();
+        }
     }
 
     @Override
@@ -36,5 +49,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        String sortMethod = Utility.getPreferredSortMethod(this);
+        if (sortMethod != null && sortMethod != mSortMethod) {
+            PreviewFragment previewFragment = (PreviewFragment) getSupportFragmentManager()
+                    .findFragmentByTag(PREVIEW_FRAGMENT_TAG);
+            if (previewFragment != null) {
+                previewFragment.onSortMethodChange();
+            }
+            mSortMethod = sortMethod;
+        }
     }
 }
