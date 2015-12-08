@@ -1,5 +1,6 @@
 package com.example.zhang.popmovies.app;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.zhang.popmovies.app.data.MovieContract;
@@ -22,15 +24,17 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     private final String LOG_TAG = PreviewFragment.class.getSimpleName();
 
     private static final int FETCH_PREVIEW_MOVIE_LOADER_ID = 0;
-    private MovieAdapter mMovieAdapter = null;
+    private PreviewAdapter mPreviewAdapter = null;
 
     private static final String[] PREVIEW_COLUMNS = {
             MovieContract.MovieEntry._ID,   //necessary for CursorAdapter
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
             MovieContract.MovieEntry.COLUMN_POSTER_PATH
     };
 
     static final int COL_PREVIEW_ID = 0;
-    static final int COL_PREVIEW_PATH = 1;
+    static final int COL_PREVIEW_MOVIE_ID = 1;
+    static final int COL_PREVIEW_PATH = 2;
 
     public PreviewFragment() {
     }
@@ -58,14 +62,32 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mMovieAdapter = new MovieAdapter(
+        mPreviewAdapter = new PreviewAdapter(
                 getActivity(),
                 null,
                 0
         );
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridView_preview);
-        gridView.setAdapter(mMovieAdapter);
+        gridView.setAdapter(mPreviewAdapter);
+
+        gridView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                        if (cursor != null) {
+                            Intent intent = new Intent(getActivity(),MovieDetailActivity.class);
+                            intent.setData(MovieContract.MovieEntry.buildMovieWithMovieId(
+                                    cursor.getLong(COL_PREVIEW_MOVIE_ID)
+                            ));
+
+                            Long l = cursor.getLong(COL_PREVIEW_MOVIE_ID);
+                            startActivity(intent);
+                        }
+                    }
+                }
+        );
 
         return rootView;
     }
@@ -111,13 +133,13 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        mMovieAdapter.swapCursor(cursor);
+        mPreviewAdapter.swapCursor(cursor);
 
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
-        mMovieAdapter.swapCursor(null);
+        mPreviewAdapter.swapCursor(null);
     }
 }

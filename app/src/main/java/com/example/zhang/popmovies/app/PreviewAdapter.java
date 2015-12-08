@@ -1,57 +1,51 @@
 package com.example.zhang.popmovies.app;
 
-import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
 /**
- * Created by zhang on 02/10/15.
+ * Created by zhang on 06/12/15.
  */
+public class PreviewAdapter extends CursorAdapter {
 
-public class PreviewAdapter extends ArrayAdapter<String> {
-
-    //Context context;
-
-    public PreviewAdapter(Context context, int resourceId, List<String> items) {
-        super(context, resourceId, items);
-        //this.context = context;
+    public PreviewAdapter(Context context, Cursor cursor, int flags) {
+        super(context, cursor, flags);
     }
-    ImageView imageView = null;
 
+    public static class ViewHolder {
 
-    public View getView(int position, View convertView, ViewGroup parent) {
-        final String IMAGE_BASE_URI = "http://image.tmdb.org/t/p";
-        final String IMAGE_SIZE = "w500";
+        public final ImageView previewView;
 
-        String posterPath = getItem(position);
-
-        Uri uri = Uri.parse(IMAGE_BASE_URI).buildUpon()
-                .appendEncodedPath(IMAGE_SIZE)
-                .appendEncodedPath(posterPath)
-                .build();
-
-        LayoutInflater mInflater = (LayoutInflater) getContext()
-                .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.grid_item_preview, null);
-            imageView = (ImageView) convertView.findViewById(R.id.grid_item_preview_imageView);
-            convertView.setTag(imageView);
-        } else {
-            imageView = (ImageView) convertView.getTag();
+        public ViewHolder(View view) {
+            previewView = (ImageView) view.findViewById(R.id.grid_item_preview_imageView);
         }
-
-        Picasso.with(getContext()).load(uri).into(imageView);
-
-        return convertView;
     }
 
+
+
+    @Override
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+
+        View view = LayoutInflater.from(context).inflate(R.layout.grid_item_preview, parent, false);
+
+        ViewHolder viewHolder = new ViewHolder(view);
+        view.setTag(viewHolder);
+
+        return view;
+    }
+
+    @Override
+    public void bindView(View view, Context context, Cursor cursor) {
+
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+
+        Picasso.with(context).load(Utility.getPreviewImage(cursor)).into(viewHolder.previewView);
+    }
 }
