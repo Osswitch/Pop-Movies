@@ -29,7 +29,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     private static final String[] PREVIEW_COLUMNS = {
             MovieContract.MovieEntry._ID,   //necessary for CursorAdapter
             MovieContract.MovieEntry.COLUMN_MOVIE_ID,
-            MovieContract.MovieEntry.COLUMN_POSTER_PATH
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
     };
 
     static final int COL_PREVIEW_ID = 0;
@@ -116,7 +116,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
             sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
         } else if (sortMethod.equals(getString(R.string.sort_entryValue_highestRate))) {
             sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + "=?";
-            sortOrder = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + " DESC";
+            sortOrder = MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " DESC";
         }
 
         return new CursorLoader(
