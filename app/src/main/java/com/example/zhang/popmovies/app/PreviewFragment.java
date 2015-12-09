@@ -76,7 +76,8 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
                                     cursor.getLong(COL_PREVIEW_MOVIE_ID)
                             ));
 
-                            Long l = cursor.getLong(COL_PREVIEW_MOVIE_ID);
+                            long movie_id = cursor.getLong(COL_PREVIEW_MOVIE_ID);
+                            new FetchTrailerAndReviewTask(getActivity()).execute(Long.toString(movie_id));
                             startActivity(intent);
                         }
                     }

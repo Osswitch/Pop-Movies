@@ -35,7 +35,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
 
 
     //Get poster uri from json
-    private void getMovieFromJson(String resultJSONStr, String sortMethod)
+    private void getMovieFromJson(String movieJSONStr, String sortMethod)
             throws JSONException {
 
         final String MDB_RESULTS = "results";
@@ -49,7 +49,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
         final String MDB_VOTE_COUNT = "vote_count";
 
         try {
-            JSONObject resultJSON = new JSONObject(resultJSONStr);
+            JSONObject resultJSON = new JSONObject(movieJSONStr);
             JSONArray resultArray = resultJSON.getJSONArray(MDB_RESULTS);
             int perPageMovieCounts = resultArray.length();
             Vector<ContentValues> contentValuesVector = new Vector<ContentValues>(perPageMovieCounts);
@@ -179,7 +179,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
-        String resultJSONStr = null;
+        String movieJSONStr = null;
 
         String method = "discover";
 
@@ -249,8 +249,8 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
                 return null;
             }
 
-            resultJSONStr = buffer.toString();
-            getMovieFromJson(resultJSONStr, sortMethod);
+            movieJSONStr = buffer.toString();
+            getMovieFromJson(movieJSONStr, sortMethod);
 
         } catch(IOException e) {
             Log.e(LOG_TAG, "error", e);

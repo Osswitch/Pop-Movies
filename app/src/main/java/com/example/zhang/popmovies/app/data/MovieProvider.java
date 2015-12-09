@@ -471,11 +471,31 @@ public class MovieProvider extends ContentProvider {
                 return returnCount;
             }
 
-            case REVIEW: {
+            case REVIEW_WITH_MOVIE_ID: {
                 db.beginTransaction();;
                 int returnCount = 0;
                 try {
+                    Long movie_id = MovieContract.ReviewEntry.getMovieIdFromUri(uri);
+
+                    Cursor resultCursor = db.query(
+                            MovieContract.ReviewEntry.TABLE_NAME,
+                            null,
+                            MovieContract.ReviewEntry.COLUMN_MOVIE_ID + "=?",
+                            new String[]{Long.toString(movie_id)},
+                            null,
+                            null,
+                            null
+                    );
+
+                    if (resultCursor.moveToFirst()) {
+                        db.delete(
+                                MovieContract.ReviewEntry.TABLE_NAME,
+                                MovieContract.ReviewEntry.COLUMN_MOVIE_ID + "=?",
+                                new String[]{Long.toString(movie_id)}
+                        );
+                    }
                     for (ContentValues values : contentValues) {
+                        values.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID, movie_id);
                         long _id = db.insert(
                                 MovieContract.ReviewEntry.TABLE_NAME,
                                 null,
@@ -485,6 +505,7 @@ public class MovieProvider extends ContentProvider {
                             returnCount++;
                         }
                     }
+                    resultCursor.close();
                     db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();
