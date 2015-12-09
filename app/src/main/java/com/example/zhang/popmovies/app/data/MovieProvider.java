@@ -428,11 +428,31 @@ public class MovieProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
                 return returnCount;
             }
-            case TRAILER: {
+            case TRAILER_WITH_MOVIE_ID: {
                 db.beginTransaction();;
                 int returnCount = 0;
                 try {
+                    Long movie_id = MovieContract.TrailerEntry.getMovieIdFromUri(uri);
+
+                    Cursor resultCursor = db.query(
+                            MovieContract.TrailerEntry.TABLE_NAME,
+                            null,
+                            MovieContract.TrailerEntry.COLUMN_MOVIE_ID + "=?",
+                            new String[]{Long.toString(movie_id)},
+                            null,
+                            null,
+                            null
+                    );
+
+                    if (resultCursor.moveToFirst()) {
+                        db.delete(
+                                MovieContract.TrailerEntry.TABLE_NAME,
+                                MovieContract.TrailerEntry.COLUMN_MOVIE_ID + "=?",
+                                new String[]{Long.toString(movie_id)}
+                        );
+                    }
                     for (ContentValues values : contentValues) {
+                        values.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movie_id);
                         long _id = db.insert(
                                 MovieContract.TrailerEntry.TABLE_NAME,
                                 null,
@@ -442,6 +462,7 @@ public class MovieProvider extends ContentProvider {
                             returnCount++;
                         }
                     }
+                    resultCursor.close();
                     db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();
