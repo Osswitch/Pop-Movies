@@ -34,7 +34,7 @@ public class FetchTrailerAndReviewTask extends AsyncTask<String, Void, Void> {
         mContext = context;
     }
 
-    private void getTrailerFromJson(int movieId, String resultJSONStr) throws JSONException{
+    private void getTrailerFromJson(int movieId, String resultJSONStr) throws JSONException {
 
         final String TDB_RESULTS = "results";
         final String TDB_ID = "id";
@@ -89,7 +89,7 @@ public class FetchTrailerAndReviewTask extends AsyncTask<String, Void, Void> {
         }
     }
 
-    private void getReviewFromJson(int movieId, String resultJSONStr) throws JSONException{
+    private void getReviewFromJson(int movieId, String resultJSONStr) throws JSONException {
 
         final String RDB_RESULTS = "results";
         final String RDB_ID = "id";
@@ -236,8 +236,6 @@ public class FetchTrailerAndReviewTask extends AsyncTask<String, Void, Void> {
 
             reviewJSONStr = buffer.toString();
             getReviewFromJson(Integer.parseInt(movie_id), reviewJSONStr);
-
-            Log.v(LOG_TAG, reviewJSONStr);
 
         } catch(IOException e) {
             Log.e(LOG_TAG, "error", e);

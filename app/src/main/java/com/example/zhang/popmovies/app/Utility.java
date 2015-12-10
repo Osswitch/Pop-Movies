@@ -22,7 +22,7 @@ public class Utility {
         final String IMAGE_BASE_URI = "http://image.tmdb.org/t/p";
         final String IMAGE_SIZE = "w500";
 
-        String posterPath = cursor.getString(PreviewFragment.COL_PREVIEW_PATH);
+        String posterPath = cursor.getString(PreviewFragment.COL_MOVIE_POSTER_PATH);
 
         Uri previewImageUri = Uri.parse(IMAGE_BASE_URI).buildUpon()
                 .appendEncodedPath(IMAGE_SIZE)
@@ -31,4 +31,5 @@ public class Utility {
 
         return previewImageUri;
     }
+
 }

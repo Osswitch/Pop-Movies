@@ -26,15 +26,23 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     private static final int FETCH_PREVIEW_MOVIE_LOADER_ID = 0;
     private PreviewAdapter mPreviewAdapter = null;
 
-    private static final String[] PREVIEW_COLUMNS = {
+    public static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry._ID,   //necessary for CursorAdapter
             MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
+            MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
             MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.MovieEntry.COLUMN_OVERVIEW
     };
 
-    static final int COL_PREVIEW_ID = 0;
-    static final int COL_PREVIEW_MOVIE_ID = 1;
-    static final int COL_PREVIEW_PATH = 2;
+    static final int COL_MOVIE_ID = 0;
+    static final int COL_MOVIE_MOVIE_ID = 1;
+    static final int COL_MOVIE_ORIGINAL_TITLE = 2;
+    static final int COL_MOVIE_RELEASE_DATE = 3;
+    static final int COL_MOVIE_POSTER_PATH = 4;
+    static final int COL_MOVIE_VOTE_AVERAGE = 5;
+    static final int COL_MOVIE_OVERVIEW = 6;
 
     public PreviewFragment() {
     }
@@ -73,10 +81,10 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
                         if (cursor != null) {
                             Intent intent = new Intent(getActivity(),MovieDetailActivity.class);
                             intent.setData(MovieContract.MovieEntry.buildMovieWithMovieId(
-                                    cursor.getLong(COL_PREVIEW_MOVIE_ID)
+                                    cursor.getLong(COL_MOVIE_MOVIE_ID)
                             ));
 
-                            long movie_id = cursor.getLong(COL_PREVIEW_MOVIE_ID);
+                            long movie_id = cursor.getLong(COL_MOVIE_MOVIE_ID);
                             new FetchTrailerAndReviewTask(getActivity()).execute(Long.toString(movie_id));
                             startActivity(intent);
                         }
@@ -123,7 +131,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
         return new CursorLoader(
                 getActivity(),
                 MovieContract.MovieEntry.CONTENT_URI,
-                PREVIEW_COLUMNS,
+                MOVIE_COLUMNS,
                 sPreviewSelection,
                 new String[]{"1"},
                 sortOrder

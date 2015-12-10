@@ -30,7 +30,9 @@ public class MovieDetailActivityFragment extends Fragment
     private static final int DETAIL_MOVIE_LOADER = 0;
     private static final int DETAIL_TRAILER_LOADER = 1;
 
+    private Long movie_id;
     private Uri movieSelectedUri;
+    private Uri trailerSelectedUri;
 
     private TrailerAdapter mTrailerAdapter = null;
 
@@ -41,23 +43,15 @@ public class MovieDetailActivityFragment extends Fragment
     private TextView voteAverageTextView;
     private TextView plotSynopsisTextView;
 
-    public static final String[] DETAIL_COLUMNS = {
-            MovieContract.MovieEntry._ID,
-            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
-            MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
-            MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
-            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
-            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
-            MovieContract.MovieEntry.COLUMN_OVERVIEW
+    public static final String[] TRAILER_COLUMNS = {
+            MovieContract.TrailerEntry._ID,
+            MovieContract.TrailerEntry.COLUMN_TRAILER_NAME,
+            MovieContract.TrailerEntry.COLUMN_TRAILER_PATH
     };
 
-    static final int COLUMN_DETAIL_ID = 0;
-    static final int COLUMN_DETAIL_MOVIE_ID = 1;
-    static final int COLUMN_DETAIL_ORIGINAL_TITLE = 2;
-    static final int COLUMN_DETAIL_RELEASE_DATE = 3;
-    static final int COLUMN_DETAIL_POSTER_PATH = 4;
-    static final int COLUMN_DETAIL_VOTE_AVERAGE = 5;
-    static final int COLUMN_DETAIL_OVERVIEW = 6;
+    static final int COLUMN_TRAILER_ID = 0;
+    static final int COLUMN_TRAILER_NAME = 1;
+    static final int COLUMN_TRAILER_PATH = 2;
 
 
     public MovieDetailActivityFragment() {
@@ -87,6 +81,15 @@ public class MovieDetailActivityFragment extends Fragment
         plotSynopsisTextView
                 = (TextView) rootView.findViewById(R.id.detail_plot_synopsis_textView);
 
+        Intent intent = getActivity().getIntent();
+
+        if (intent != null && intent.getData() != null) {
+            movieSelectedUri = intent.getData();
+            movie_id = MovieContract.MovieEntry.getMovieIdFromUri(movieSelectedUri);
+            trailerSelectedUri = MovieContract.TrailerEntry.buildTrailerWithMovieId(movie_id);
+        }
+
+
         mTrailerAdapter = new TrailerAdapter(
                 getActivity(),
                 null,
@@ -103,9 +106,8 @@ public class MovieDetailActivityFragment extends Fragment
                         if (cursor != null) {
                             Intent trailerIntent = new Intent(Intent.ACTION_VIEW);
                             Uri path = Uri.parse("https://www.youtube.com/watch").buildUpon()
-                                    .appendQueryParameter("v", cursor.getString(cursor.getColumnIndex(MovieContract.TrailerEntry.COLUMN_TRAILER_PATH)))
+                                    .appendQueryParameter("v", cursor.getString(COLUMN_TRAILER_PATH))
                                     .build();
-
 
                             trailerIntent.setData(path);
                             startActivity(trailerIntent);
@@ -114,12 +116,6 @@ public class MovieDetailActivityFragment extends Fragment
                     }
                 }
         );
-
-        Intent intent = getActivity().getIntent();
-
-        if (intent != null && intent.getData() != null) {
-            movieSelectedUri = intent.getData();
-        }
         return rootView;
     }
 
@@ -138,24 +134,25 @@ public class MovieDetailActivityFragment extends Fragment
             return new CursorLoader(
                     getActivity(),
                     movieSelectedUri,
-                    DETAIL_COLUMNS,
+                    PreviewFragment.MOVIE_COLUMNS,
                     null,
                     null,
                     null
             );
         } else if (id == DETAIL_TRAILER_LOADER) {
-            if (movieSelectedUri == null) {
+            if (trailerSelectedUri == null) {
                 return null;
             }
             return new CursorLoader(
                     getActivity(),
-                    MovieContract.TrailerEntry.buildTrailerWithMovieId(MovieContract.MovieEntry.getMovieIdFromUri(movieSelectedUri)),
-                    null,
+                    trailerSelectedUri,
+                    TRAILER_COLUMNS,
                     null,
                     null,
                     null
             );
         }
+
         return null;
     }
 
@@ -167,21 +164,23 @@ public class MovieDetailActivityFragment extends Fragment
                 return;
             }
 
-            titleTextView.setText(cursor.getString(COLUMN_DETAIL_ORIGINAL_TITLE));
-            releaseDateTextView.setText(cursor.getString(COLUMN_DETAIL_RELEASE_DATE));
+            titleTextView.setText(cursor.getString(PreviewFragment.COL_MOVIE_ORIGINAL_TITLE));
+            releaseDateTextView.setText(cursor.getString(PreviewFragment.COL_MOVIE_RELEASE_DATE));
             Picasso.with(getContext()).load(Utility.getPreviewImage(cursor))
                     .into(posterImageView);
-            voteAverageTextView.setText(cursor.getString(COLUMN_DETAIL_VOTE_AVERAGE));
-            plotSynopsisTextView.setText(cursor.getString(COLUMN_DETAIL_OVERVIEW));
+            voteAverageTextView.setText(cursor.getString(PreviewFragment.COL_MOVIE_VOTE_AVERAGE));
+            plotSynopsisTextView.setText(cursor.getString(PreviewFragment.COL_MOVIE_OVERVIEW));
         } else if (loader.getId() == DETAIL_TRAILER_LOADER) {
             mTrailerAdapter.swapCursor(cursor);
         }
-
 
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+        if (loader.getId() == DETAIL_TRAILER_LOADER) {
+            mTrailerAdapter.swapCursor(null);
+        }
     }
 }
