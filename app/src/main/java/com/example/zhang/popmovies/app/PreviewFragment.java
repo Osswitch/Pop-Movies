@@ -26,7 +26,8 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     private final String LOG_TAG = PreviewFragment.class.getSimpleName();
 
     private static final int FETCH_PREVIEW_MOVIE_LOADER_ID = 0;
-    private PreviewAdapter mPreviewAdapter = null;
+    private PreviewAdapter mPreviewAdapter;
+    private GridView gridView;
 
     public static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry._ID,   //necessary for CursorAdapter
@@ -83,7 +84,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
                 0
         );
 
-        GridView gridView = (GridView) rootView.findViewById(R.id.gridView_preview);
+        gridView = (GridView) rootView.findViewById(R.id.gridView_preview);
         gridView.setAdapter(mPreviewAdapter);
 
         gridView.setOnItemClickListener(
@@ -155,7 +156,6 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mPreviewAdapter.swapCursor(cursor);
-
     }
 
     @Override

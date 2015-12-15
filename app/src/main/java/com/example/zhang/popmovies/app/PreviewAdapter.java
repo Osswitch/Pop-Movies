@@ -15,6 +15,8 @@ import com.squareup.picasso.Picasso;
  */
 public class PreviewAdapter extends CursorAdapter {
 
+    private static final String previewPosterSize = "w320";
+
     public PreviewAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
     }
@@ -34,7 +36,7 @@ public class PreviewAdapter extends CursorAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.grid_item_preview, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(view);
-        view.setTag(viewHolder);
+        view.setTag(R.string.app_name, viewHolder);
 
         return view;
     }
@@ -42,8 +44,8 @@ public class PreviewAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        ViewHolder viewHolder = (ViewHolder) view.getTag(R.string.app_name);
 
-        Picasso.with(context).load(Utility.getPreviewImage(cursor)).into(viewHolder.previewView);
+        Picasso.with(context).load(Utility.getPreviewImage(cursor, previewPosterSize)).into(viewHolder.previewView);
     }
 }

@@ -17,10 +17,10 @@ public class Utility {
                 context.getString(R.string.pref_sort_defValue));
     }
 
-    public static Uri getPreviewImage(Cursor cursor) {
+    public static Uri getPreviewImage(Cursor cursor, String size) {
 
         final String IMAGE_BASE_URI = "http://image.tmdb.org/t/p";
-        final String IMAGE_SIZE = "w500";
+        final String IMAGE_SIZE = size;
 
         String posterPath = cursor.getString(PreviewFragment.COL_MOVIE_POSTER_PATH);
 

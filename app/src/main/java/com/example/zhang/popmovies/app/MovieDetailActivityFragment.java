@@ -30,6 +30,8 @@ public class MovieDetailActivityFragment extends Fragment
     private static final int DETAIL_MOVIE_LOADER = 0;
     private static final int DETAIL_TRAILER_LOADER = 1;
 
+    private static final String detailPosterSize = "w500";
+
     private Long movie_id;
     private Uri movieSelectedUri;
     private Uri trailerSelectedUri;
@@ -166,7 +168,7 @@ public class MovieDetailActivityFragment extends Fragment
 
             titleTextView.setText(cursor.getString(PreviewFragment.COL_MOVIE_ORIGINAL_TITLE));
             releaseDateTextView.setText(cursor.getString(PreviewFragment.COL_MOVIE_RELEASE_DATE));
-            Picasso.with(getContext()).load(Utility.getPreviewImage(cursor))
+            Picasso.with(getContext()).load(Utility.getPreviewImage(cursor, detailPosterSize))
                     .into(posterImageView);
             voteAverageTextView.setText(cursor.getString(PreviewFragment.COL_MOVIE_VOTE_AVERAGE));
             plotSynopsisTextView.setText(cursor.getString(PreviewFragment.COL_MOVIE_OVERVIEW));
