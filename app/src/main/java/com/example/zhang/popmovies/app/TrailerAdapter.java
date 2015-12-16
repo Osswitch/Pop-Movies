@@ -2,6 +2,7 @@ package com.example.zhang.popmovies.app;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.TextView;
  * Created by zhang on 09/12/15.
  */
 public class TrailerAdapter extends CursorAdapter {
+
+    private static final String LOG_TAG = TrailerAdapter.class.getSimpleName();
 
     public TrailerAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
@@ -38,11 +41,13 @@ public class TrailerAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        final ViewHolder viewHolder = (ViewHolder) view.getTag();
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         String trailerName = cursor.getString(MovieDetailActivityFragment.COLUMN_TRAILER_NAME);
 
         viewHolder.trailerNameTextView.setText(trailerName);
+
+        Log.v(LOG_TAG, "trailer " + cursor.getString(MovieDetailActivityFragment.COLUMN_TRAILER_NAME));
 
     }
 }

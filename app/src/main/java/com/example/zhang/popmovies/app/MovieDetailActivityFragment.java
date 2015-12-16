@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,14 +30,20 @@ public class MovieDetailActivityFragment extends Fragment
 
     private static final int DETAIL_MOVIE_LOADER = 0;
     private static final int DETAIL_TRAILER_LOADER = 1;
+    private static final int DETAIL_REVIEW_LOADER = 2;
 
     private static final String detailPosterSize = "w500";
 
     private Long movie_id;
     private Uri movieSelectedUri;
     private Uri trailerSelectedUri;
+    private Uri reviewSelectedUri;
 
-    private TrailerAdapter mTrailerAdapter = null;
+    private TrailerAdapter mTrailerAdapter;
+    private ReviewAdapter mReviewAdapter;
+
+    private ListView trailerListView;
+    private ListView reviewListView;
 
     private TextView titleTextView;
     private TextView releaseDateTextView;
@@ -51,9 +58,19 @@ public class MovieDetailActivityFragment extends Fragment
             MovieContract.TrailerEntry.COLUMN_TRAILER_PATH
     };
 
+    public static final String[] REVIEW_COLUMNS = {
+            MovieContract.ReviewEntry._ID,
+            MovieContract.ReviewEntry.COLUMN_REVIEW_AUTHOR,
+            MovieContract.ReviewEntry.COLUMN_REVIEW_CONTENT
+    };
+
     static final int COLUMN_TRAILER_ID = 0;
     static final int COLUMN_TRAILER_NAME = 1;
     static final int COLUMN_TRAILER_PATH = 2;
+
+    static final int COLUMN_REVIEW_ID = 0;
+    static final int COLUMN_REVIEW_AUTHOR = 1;
+    static final int COLUMN_REVIEW_CONTENT = 2;
 
 
     public MovieDetailActivityFragment() {
@@ -64,6 +81,7 @@ public class MovieDetailActivityFragment extends Fragment
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(DETAIL_MOVIE_LOADER, null, this);
         getLoaderManager().initLoader(DETAIL_TRAILER_LOADER, null, this);
+        getLoaderManager().initLoader(DETAIL_REVIEW_LOADER, null, this);
     }
 
     @Override
@@ -89,6 +107,7 @@ public class MovieDetailActivityFragment extends Fragment
             movieSelectedUri = intent.getData();
             movie_id = MovieContract.MovieEntry.getMovieIdFromUri(movieSelectedUri);
             trailerSelectedUri = MovieContract.TrailerEntry.buildTrailerWithMovieId(movie_id);
+            reviewSelectedUri = MovieContract.ReviewEntry.buildReviewWithMovieId(movie_id);
         }
 
 
@@ -98,7 +117,13 @@ public class MovieDetailActivityFragment extends Fragment
                 0
         );
 
-        ListView trailerListView = (ListView) rootView.findViewById(R.id.listView_trailer);
+        mReviewAdapter = new ReviewAdapter(
+                getActivity(),
+                null,
+                0
+        );
+
+        trailerListView = (ListView) rootView.findViewById(R.id.listView_trailer);
         trailerListView.setAdapter(mTrailerAdapter);
         trailerListView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
@@ -118,6 +143,10 @@ public class MovieDetailActivityFragment extends Fragment
                     }
                 }
         );
+
+        reviewListView = (ListView) rootView.findViewById(R.id.listView_review);
+        reviewListView.setAdapter(mReviewAdapter);
+
         return rootView;
     }
 
@@ -153,6 +182,18 @@ public class MovieDetailActivityFragment extends Fragment
                     null,
                     null
             );
+        } else if (id == DETAIL_REVIEW_LOADER) {
+            if (reviewSelectedUri == null) {
+                return null;
+            }
+            return new CursorLoader(
+                    getActivity(),
+                    reviewSelectedUri,
+                    REVIEW_COLUMNS,
+                    null,
+                    null,
+                    null
+            );
         }
 
         return null;
@@ -174,6 +215,15 @@ public class MovieDetailActivityFragment extends Fragment
             plotSynopsisTextView.setText(cursor.getString(PreviewFragment.COL_MOVIE_OVERVIEW));
         } else if (loader.getId() == DETAIL_TRAILER_LOADER) {
             mTrailerAdapter.swapCursor(cursor);
+            Log.v(LOG_TAG, Integer.toString(cursor.getCount()));
+            cursor.moveToFirst();
+            for (int i = 0; i < cursor.getCount(); i++) {
+                Log.v(LOG_TAG, cursor.getString(COLUMN_TRAILER_NAME));
+                cursor.moveToNext();
+            }
+        } else if (loader.getId() == DETAIL_REVIEW_LOADER) {
+            mReviewAdapter.swapCursor(cursor);
+            Log.v(LOG_TAG, " review has " + Integer.toString(cursor.getCount()));
         }
 
     }

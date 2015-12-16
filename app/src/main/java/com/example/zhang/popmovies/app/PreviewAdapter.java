@@ -2,10 +2,10 @@ package com.example.zhang.popmovies.app;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -13,7 +13,8 @@ import com.squareup.picasso.Picasso;
 /**
  * Created by zhang on 06/12/15.
  */
-public class PreviewAdapter extends CursorAdapter {
+public class PreviewAdapter extends CursorAdapter
+{
 
     private static final String previewPosterSize = "w320";
 
