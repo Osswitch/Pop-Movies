@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -41,21 +42,48 @@ public class Utility {
         if (listAdapter == null)
             return;
 
-        //int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
         int totalHeight = 0;
         View view = null;
         for (int i = 0; i < listAdapter.getCount(); i++) {
             view = listAdapter.getView(i, view, listView);
-//            if (i == 0) {
-//                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
-//            }
-            //view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            if (i == 0) {
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+            }
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
             view.measure(0, View.MeasureSpec.UNSPECIFIED);
+            int a = view.getMeasuredHeight();
             totalHeight += view.getMeasuredHeight();
         }
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
+    }
+
+    public static void setListViewOnTouchListener (ListView listView) {
+        listView.setOnTouchListener(
+                new ListView.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+
+                        int action = event.getAction();
+                        switch (action) {
+                            case MotionEvent.ACTION_DOWN:
+                                // Disallow ScrollView to intercept touch events.
+                                v.getParent().requestDisallowInterceptTouchEvent(true);
+                                break;
+
+                            case MotionEvent.ACTION_UP:
+                                // Allow ScrollView to intercept touch events.
+                                v.getParent().requestDisallowInterceptTouchEvent(false);
+                                break;
+                        }
+
+                        // Handle ListView touch events.
+                        return true;
+                    }
+                }
+        );
     }
 
 }

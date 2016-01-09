@@ -83,6 +83,8 @@ public class FetchTrailerAndReviewTask extends AsyncTask<String, Void, Void> {
 
             Log.v(LOG_TAG, "Fetch trailer task completed " + cursor.getCount() + " inserted");
 
+            cursor.close();
+
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -141,6 +143,8 @@ public class FetchTrailerAndReviewTask extends AsyncTask<String, Void, Void> {
             );
 
             Log.v(LOG_TAG, "Fetch review task completed " + cursor.getCount() + " inserted");
+
+            cursor.close();
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);

@@ -2,7 +2,6 @@ package com.example.zhang.popmovies.app;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +45,6 @@ public class TrailerAdapter extends CursorAdapter {
         String trailerName = cursor.getString(MovieDetailActivityFragment.COLUMN_TRAILER_NAME);
 
         viewHolder.trailerNameTextView.setText(trailerName);
-
-        Log.v(LOG_TAG, "trailer " + cursor.getString(MovieDetailActivityFragment.COLUMN_TRAILER_NAME));
 
     }
 }
