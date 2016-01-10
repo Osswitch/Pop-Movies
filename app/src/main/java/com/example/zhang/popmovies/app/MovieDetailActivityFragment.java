@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -145,30 +144,7 @@ public class MovieDetailActivityFragment extends Fragment
         );
 
         reviewListView = (ListView) rootView.findViewById(R.id.listView_review);
-        Utility.setListViewOnTouchListener(reviewListView);
-//        reviewListView.setOnTouchListener(
-//                new ListView.OnTouchListener() {
-//                    @Override
-//                    public boolean onTouch(View v, MotionEvent event) {
-//
-//                        int action = event.getAction();
-//                        switch (action) {
-//                            case MotionEvent.ACTION_DOWN:
-//                                // Disallow ScrollView to intercept touch events.
-//                                v.getParent().requestDisallowInterceptTouchEvent(true);
-//                                break;
-//
-//                            case MotionEvent.ACTION_UP:
-//                                // Allow ScrollView to intercept touch events.
-//                                v.getParent().requestDisallowInterceptTouchEvent(false);
-//                                break;
-//                        }
-//
-//                        // Handle ListView touch events.
-//                        return true;
-//                    }
-//                }
-//        );
+        //Utility.setListViewOnTouchListener(reviewListView);
         reviewListView.setAdapter(mReviewAdapter);
 
         return rootView;
@@ -247,15 +223,7 @@ public class MovieDetailActivityFragment extends Fragment
         } else if (loader.getId() == DETAIL_REVIEW_LOADER) {
 
             mReviewAdapter.swapCursor(cursor);
-            //Utility.setListViewHeightBasedOnChildren(reviewListView);
-
-            cursor.moveToFirst();
-            for (int i = 0 ; i < cursor.getCount(); i++) {
-                //Log.v(LOG_TAG, "author is " + cursor.getString(COLUMN_REVIEW_AUTHOR));
-                Log.v(LOG_TAG, "author is " + cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_AUTHOR) + " review is " + cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_CONTENT));
-                cursor.moveToNext();
-                
-            }
+            Utility.setListViewOnTouchListener(reviewListView);
 
         }
 

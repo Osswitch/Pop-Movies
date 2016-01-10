@@ -72,11 +72,18 @@
                 android:id="@+id/listView_trailer"
                 android:choiceMode="singleChoice"/>
 
-            <ListView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/listView_review"
-                android:choiceMode="multipleChoice"/>
+                android:layout_height="wrap_content">
+
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listView_review"
+                    android:choiceMode="multipleChoice"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>

@@ -16,6 +16,8 @@ import android.widget.ListView;
  */
 public class Utility {
 
+    private static final String LOG_TAG = Utility.class.getSimpleName();
+
     public static String getPreferredSortMethod(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getString(context.getString(R.string.pref_sort_key),
@@ -70,17 +72,18 @@ public class Utility {
                         switch (action) {
                             case MotionEvent.ACTION_DOWN:
                                 // Disallow ScrollView to intercept touch events.
-                                v.getParent().requestDisallowInterceptTouchEvent(true);
+                                v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
                                 break;
 
                             case MotionEvent.ACTION_UP:
                                 // Allow ScrollView to intercept touch events.
-                                v.getParent().requestDisallowInterceptTouchEvent(false);
+                                v.getParent().getParent().requestDisallowInterceptTouchEvent(false);
                                 break;
                         }
 
                         // Handle ListView touch events.
-                        return true;
+                        //v.onTouchEvent(event);
+                        return false;
                     }
                 }
         );
