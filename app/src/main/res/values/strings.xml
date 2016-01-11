@@ -13,17 +13,21 @@
     
     <string name="sort_entries_popularity">Popularity</string>
     <string name="sort_entries_highestRate">Highest Rate</string>
+    <string name="sort_entries_favourite">My Favourite</string>
     <string name="sort_entryValue_popularity">popularity.desc</string>
     <string name="sort_entryValue_highestRate">vote_average.desc</string>
+    <string name="sort_entryValue_favourite">favourite</string>
     
     <string-array name="pref_sort_entries">
         <item>@string/sort_entries_popularity</item>
         <item>@string/sort_entries_highestRate</item>
+        <item>@string/sort_entries_favourite</item>
     </string-array>
 
     <string-array name="pref_sort_entryValues">
         <item>@string/sort_entryValue_popularity</item>
         <item>@string/sort_entryValue_highestRate</item>
+        <item>@string/sort_entryValue_favourite</item>
     </string-array>
 
     <string name="pref_sort_defValue">popularity.desc</string>

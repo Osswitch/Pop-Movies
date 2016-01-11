@@ -144,6 +144,8 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
         } else if (sortMethod.equals(getString(R.string.sort_entryValue_highestRate))) {
             sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + "=?";
             sortOrder = MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " DESC";
+        } else if (sortMethod.equals(getString(R.string.sort_entryValue_favourite))) {
+            sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_FAVOURITE + "=?";
         }
 
         return new CursorLoader(
