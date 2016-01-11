@@ -257,6 +257,12 @@ public class MovieDetailActivityFragment extends Fragment
             voteAverageTextView.setText(cursor.getString(PreviewFragment.COL_MOVIE_VOTE_AVERAGE));
             plotSynopsisTextView.setText(cursor.getString(PreviewFragment.COL_MOVIE_OVERVIEW));
 
+            if (cursor.getInt(PreviewFragment.COL_MOVIE_IS_FAVOURITE) == 0) {
+                markButton.setText(R.string.mark_as_favorite);
+            } else if (cursor.getInt(PreviewFragment.COL_MOVIE_IS_FAVOURITE) == 1) {
+                markButton.setText(R.string.unmark_the_movie);
+            }
+
         } else if (loader.getId() == DETAIL_TRAILER_LOADER) {
 
             mTrailerAdapter.swapCursor(cursor);
