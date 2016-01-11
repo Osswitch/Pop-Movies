@@ -1,5 +1,6 @@
 package com.example.zhang.popmovies.app;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +35,7 @@ public class MovieDetailActivityFragment extends Fragment
     private static final String detailPosterSize = "w500";
 
     private Long movie_id;
+
     private Uri movieSelectedUri;
     private Uri trailerSelectedUri;
     private Uri reviewSelectedUri;
@@ -42,6 +45,8 @@ public class MovieDetailActivityFragment extends Fragment
 
     private NestedListView trailerListView;
     private NestedListView reviewListView;
+
+    private Button markButton;
 
     private TextView titleTextView;
     private TextView releaseDateTextView;
@@ -83,7 +88,7 @@ public class MovieDetailActivityFragment extends Fragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
         //return inflater.inflate(R.layout.fragment_movie_detail, container, false);
@@ -144,6 +149,45 @@ public class MovieDetailActivityFragment extends Fragment
 
         reviewListView = (NestedListView) rootView.findViewById(R.id.listView_review);
         reviewListView.setAdapter(mReviewAdapter);
+
+        markButton = (Button) rootView.findViewById(R.id.detail_mark_button);
+        markButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Button button = (Button) v;
+
+                        Cursor cursor = getActivity().getContentResolver().query(
+                                movieSelectedUri,
+                                PreviewFragment.MOVIE_COLUMNS,
+                                null,
+                                null,
+                                null
+                        );
+
+                        cursor.moveToFirst();
+
+                        int isFavourite = cursor.getInt(PreviewFragment.COL_MOVIE_IS_FAVOURITE);
+
+                        ContentValues updateValues = new ContentValues();
+                        if (isFavourite == 0) {
+                            updateValues.put(MovieContract.MovieEntry.COLUMN_IS_FAVOURITE, 1);
+                            ((Button) v).setText(R.string.unmark_the_movie);
+                        } else if (isFavourite == 1) {
+                            updateValues.put(MovieContract.MovieEntry.COLUMN_IS_FAVOURITE, 0);
+                            ((Button) v).setText(R.string.mark_as_favorite);
+                        }
+
+                        getActivity().getContentResolver().update(
+                                movieSelectedUri,
+                                updateValues,
+                                MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?",
+                                new String[]{Long.toString(movie_id)}
+                        );
+                    }
+                }
+        );
 
         return rootView;
     }

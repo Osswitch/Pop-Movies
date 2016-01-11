@@ -33,19 +33,23 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
             MovieContract.MovieEntry._ID,   //necessary for CursorAdapter
             MovieContract.MovieEntry.COLUMN_MOVIE_ID,
             MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE,
+            MovieContract.MovieEntry.COLUMN_OVERVIEW,
             MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
             MovieContract.MovieEntry.COLUMN_POSTER_PATH,
             MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
-            MovieContract.MovieEntry.COLUMN_OVERVIEW
+            MovieContract.MovieEntry.COLUMN_IS_FAVOURITE
+
     };
 
     static final int COL_MOVIE_ID = 0;
     static final int COL_MOVIE_MOVIE_ID = 1;
     static final int COL_MOVIE_ORIGINAL_TITLE = 2;
-    static final int COL_MOVIE_RELEASE_DATE = 3;
-    static final int COL_MOVIE_POSTER_PATH = 4;
-    static final int COL_MOVIE_VOTE_AVERAGE = 5;
-    static final int COL_MOVIE_OVERVIEW = 6;
+    static final int COL_MOVIE_OVERVIEW = 3;
+    static final int COL_MOVIE_RELEASE_DATE = 4;
+    static final int COL_MOVIE_POSTER_PATH = 5;
+    static final int COL_MOVIE_VOTE_AVERAGE = 6;
+    static final int COL_MOVIE_IS_FAVOURITE = 7;
+
 
     public PreviewFragment() {
     }

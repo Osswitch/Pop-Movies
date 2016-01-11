@@ -354,6 +354,13 @@ public class MovieProvider extends ContentProvider {
                         selectionArgs);
                 break;
             }
+            case MOVIE_WITH_MOVIE_ID: {
+                rowsUpdated = db.update(MovieContract.MovieEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
+            }
             case TRAILER: {
                 rowsUpdated = db.update(
                         MovieContract.TrailerEntry.TABLE_NAME,
