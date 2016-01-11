@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.zhang.popmovies.app.data.MovieContract;
@@ -41,8 +40,8 @@ public class MovieDetailActivityFragment extends Fragment
     private TrailerAdapter mTrailerAdapter;
     private ReviewAdapter mReviewAdapter;
 
-    private ListView trailerListView;
-    private ListView reviewListView;
+    private NestedListView trailerListView;
+    private NestedListView reviewListView;
 
     private TextView titleTextView;
     private TextView releaseDateTextView;
@@ -122,7 +121,7 @@ public class MovieDetailActivityFragment extends Fragment
                 0
         );
 
-        trailerListView = (ListView) rootView.findViewById(R.id.listView_trailer);
+        trailerListView = (NestedListView) rootView.findViewById(R.id.listView_trailer);
         trailerListView.setAdapter(mTrailerAdapter);
         trailerListView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
@@ -143,8 +142,7 @@ public class MovieDetailActivityFragment extends Fragment
                 }
         );
 
-        reviewListView = (ListView) rootView.findViewById(R.id.listView_review);
-        //Utility.setListViewOnTouchListener(reviewListView);
+        reviewListView = (NestedListView) rootView.findViewById(R.id.listView_review);
         reviewListView.setAdapter(mReviewAdapter);
 
         return rootView;
@@ -218,12 +216,10 @@ public class MovieDetailActivityFragment extends Fragment
         } else if (loader.getId() == DETAIL_TRAILER_LOADER) {
 
             mTrailerAdapter.swapCursor(cursor);
-            Utility.setListViewHeightBasedOnChildren(trailerListView);
 
         } else if (loader.getId() == DETAIL_REVIEW_LOADER) {
 
             mReviewAdapter.swapCursor(cursor);
-            Utility.setListViewOnTouchListener(reviewListView);
 
         }
 
