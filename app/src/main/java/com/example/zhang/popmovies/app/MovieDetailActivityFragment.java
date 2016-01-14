@@ -150,6 +150,17 @@ public class MovieDetailActivityFragment extends Fragment
         reviewListView = (NestedListView) rootView.findViewById(R.id.listView_review);
         reviewListView.setAdapter(mReviewAdapter);
 
+//        reviewListView.setOnItemClickListener(
+//                new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                        ListView review = (ListView) view;
+//                        review.invalidateViews();
+//
+//                    }
+//                }
+//        );
+
         markButton = (Button) rootView.findViewById(R.id.detail_mark_button);
         markButton.setOnClickListener(
                 new View.OnClickListener() {

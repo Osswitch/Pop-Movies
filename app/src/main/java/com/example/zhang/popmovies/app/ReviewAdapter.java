@@ -3,6 +3,7 @@ package com.example.zhang.popmovies.app;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,28 @@ public class ReviewAdapter extends CursorAdapter {
 
         viewHolder.authorTextView.setText(cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_AUTHOR));
         viewHolder.contentTextView.setText(cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_CONTENT));
+
+        viewHolder.contentTextView.setOnClickListener(
+                new View.OnClickListener() {
+                    // First click expand the textview, second click collapse it.
+                    Boolean flag = true;
+                    @Override
+                    public void onClick(View v) {
+                        TextView contentView = (TextView) v;
+                        if (flag) {
+                            contentView.setMaxLines(Integer.MAX_VALUE);
+                            flag = false;
+                        } else {
+                            contentView.setLines(1);
+                            flag = true;
+                        }
+                        NestedListView reviewListView = (NestedListView) contentView.getParent().getParent();
+                        reviewListView.measure(reviewListView.getMeasuredWidth(), reviewListView.getMeasuredHeight());
+                        Log.v(LOG_TAG, contentView.getParent().getParent().toString());
+                        //contentView.invalidate();
+                    }
+                }
+        );
 
     }
 }
