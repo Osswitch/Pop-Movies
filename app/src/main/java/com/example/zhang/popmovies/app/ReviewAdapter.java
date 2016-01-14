@@ -47,24 +47,6 @@ public class ReviewAdapter extends CursorAdapter {
 
         viewHolder.authorTextView.setText(cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_AUTHOR));
         viewHolder.contentTextView.setText(cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_CONTENT));
-        viewHolder.contentTextView.setMaxLines(Integer.MAX_VALUE);
-
-        //Log.v(LOG_TAG, "author is " + cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_AUTHOR) + " review is " + cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_CONTENT));
-
-//        viewHolder.contentTextView.setOnClickListener(
-//                new View.OnClickListener() {
-//                    Boolean flag = true;
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (flag) {
-//                            flag = false;
-//                            viewHolder.contentTextView.setSingleLine(flag);
-//                        } else {
-//                            viewHolder.contentTextView.setLines(4);
-//                        }
-//                    }
-//                }
-//        );
 
     }
 }
