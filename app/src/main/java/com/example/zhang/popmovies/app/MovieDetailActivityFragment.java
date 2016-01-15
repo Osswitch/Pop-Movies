@@ -154,24 +154,22 @@ public class MovieDetailActivityFragment extends Fragment
 
         reviewListView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
-                    // First click expand the textview, second click collapse it.
-                    Boolean flag = true;
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (flag) {
+                        // First click expand the textview, second click collapse it.
+                        if (clickedFlags[position] == 0) {
                             // set the clicked rows to be 1
                             clickedFlags[position] = 1;
-                            flag = false;
-                        } else {
+                        } else if (clickedFlags[position] == 1) {
                             // set the unclicked rows to be 0
                             clickedFlags[position] = 0;
-                            flag = true;
                         }
 
                         // reset adapter to remeasure the review content listview
                         NestedListView review = (NestedListView) view.getParent();
                         mReviewAdapter.insertClickedFlag(clickedFlags);
                         review.setAdapter(mReviewAdapter);
+
                     }
                 }
         );
