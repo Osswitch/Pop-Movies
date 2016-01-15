@@ -75,6 +75,8 @@ public class MovieDetailActivityFragment extends Fragment
     static final int COLUMN_REVIEW_AUTHOR = 1;
     static final int COLUMN_REVIEW_CONTENT = 2;
 
+    // Indicated rows which are clicked.
+    private static Integer[] clickedFlags;
 
     public MovieDetailActivityFragment() {
     }
@@ -156,21 +158,20 @@ public class MovieDetailActivityFragment extends Fragment
                     Boolean flag = true;
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                        TextView reviewContentTextView =
-                                (TextView) view.findViewById(R.id.list_item_review_content_textview);
-
                         if (flag) {
-                            reviewContentTextView.setMaxLines(Integer.MAX_VALUE);
+                            // set the clicked rows to be 1
+                            clickedFlags[position] = 1;
                             flag = false;
                         } else {
-                            reviewContentTextView.setLines(1);
+                            // set the unclicked rows to be 0
+                            clickedFlags[position] = 0;
                             flag = true;
                         }
 
+                        // reset adapter to remeasure the review content listview
                         NestedListView review = (NestedListView) view.getParent();
+                        mReviewAdapter.insertClickedFlag(clickedFlags);
                         review.setAdapter(mReviewAdapter);
-
                     }
                 }
         );
@@ -295,6 +296,11 @@ public class MovieDetailActivityFragment extends Fragment
         } else if (loader.getId() == DETAIL_REVIEW_LOADER) {
 
             mReviewAdapter.swapCursor(cursor);
+            clickedFlags = new Integer[cursor.getCount()];
+            for (int i = 0; i < cursor.getCount(); i++) {
+                clickedFlags[i] = 0;
+            }
+            mReviewAdapter.insertClickedFlag(clickedFlags);
 
         }
 

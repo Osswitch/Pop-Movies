@@ -15,6 +15,9 @@ public class ReviewAdapter extends CursorAdapter {
 
     private static final String LOG_TAG = ReviewAdapter.class.getSimpleName();
 
+    // Indicate which rows of the review listview have been clicked.
+    private static Integer[] clickedArrays;
+
     public ReviewAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
     }
@@ -48,5 +51,18 @@ public class ReviewAdapter extends CursorAdapter {
         viewHolder.authorTextView.setText(cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_AUTHOR));
         viewHolder.contentTextView.setText(cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_CONTENT));
 
+        if (clickedArrays[cursor.getPosition()] == 0) {
+            //let rows not being clicked display one line
+            viewHolder.contentTextView.setLines(1);
+        } else if (clickedArrays[cursor.getPosition()] == 1) {
+            // let rows being clicked display fully.
+            viewHolder.contentTextView.setMaxLines(Integer.MAX_VALUE);
+        }
+
+    }
+
+    // get the clicked rows position
+    public void insertClickedFlag(Integer[] clickedFlag) {
+        clickedArrays = clickedFlag;
     }
 }
