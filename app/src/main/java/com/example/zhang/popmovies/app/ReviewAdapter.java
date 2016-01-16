@@ -15,6 +15,9 @@ public class ReviewAdapter extends CursorAdapter {
 
     private static final String LOG_TAG = ReviewAdapter.class.getSimpleName();
 
+    private static final int VIEW_UNCLICKED = 0;
+    private static final int VIEW_CLICKED = 1;
+
     // Indicate which rows of the review listview have been clicked.
     private static Integer[] clickedArrays;
 
@@ -34,11 +37,28 @@ public class ReviewAdapter extends CursorAdapter {
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return (clickedArrays[position] == 0) ? VIEW_UNCLICKED : VIEW_CLICKED;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
         View view = LayoutInflater.from(context).inflate(R.layout.list_item_review, parent, false);
 
+        int viewType = getItemViewType(cursor.getPosition());
+
         ViewHolder viewHolder = new ViewHolder(view);
+        if (viewType == VIEW_UNCLICKED) {
+            viewHolder.contentTextView.setLines(1);
+        } else if (viewType == VIEW_CLICKED) {
+            viewHolder.contentTextView.setMaxLines(Integer.MAX_VALUE);
+        }
         view.setTag(viewHolder);
         return view;
     }
@@ -50,14 +70,6 @@ public class ReviewAdapter extends CursorAdapter {
 
         viewHolder.authorTextView.setText(cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_AUTHOR));
         viewHolder.contentTextView.setText(cursor.getString(MovieDetailActivityFragment.COLUMN_REVIEW_CONTENT));
-
-        if (clickedArrays[cursor.getPosition()] == 0) {
-            //let rows not being clicked display one line
-            viewHolder.contentTextView.setLines(1);
-        } else if (clickedArrays[cursor.getPosition()] == 1) {
-            // let rows being clicked display fully.
-            viewHolder.contentTextView.setMaxLines(Integer.MAX_VALUE);
-        }
 
     }
 
