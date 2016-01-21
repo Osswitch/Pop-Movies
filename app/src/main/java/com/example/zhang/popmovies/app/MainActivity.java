@@ -11,6 +11,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private static final String PREVIEW_FRAGMENT_TAG = "PFTAG";
+    private static final String DETAIL_FRAGMENT_TAG = "DFTAG";
+
+    private Boolean mTwoPane;
     private String mSortMethod;
 
     @Override
@@ -24,6 +27,17 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_main, new PreviewFragment(), PREVIEW_FRAGMENT_TAG)
                     .commit();
+        }
+
+        if (findViewById(R.id.detail_movie_container) != null) {
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.detail_movie_container, new MovieDetailActivityFragment(), DETAIL_FRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
         }
     }
 
@@ -64,5 +78,9 @@ public class MainActivity extends AppCompatActivity {
             }
             mSortMethod = sortMethod;
         }
+
+        MovieDetailActivityFragment movieDetailActivityFragment
+                = (MovieDetailActivityFragment) getSupportFragmentManager()
+                .findFragmentByTag(DETAIL_FRAGMENT_TAG);
     }
 }
