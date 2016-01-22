@@ -32,6 +32,8 @@ public class MovieDetailActivityFragment extends Fragment
     private static final int DETAIL_TRAILER_LOADER = 1;
     private static final int DETAIL_REVIEW_LOADER = 2;
 
+    public static final String DETAIL_MOVIE_URI = "URI";
+
     private static final String detailPosterSize = "w500";
 
     private Long movie_id;
@@ -106,15 +108,13 @@ public class MovieDetailActivityFragment extends Fragment
         plotSynopsisTextView
                 = (TextView) rootView.findViewById(R.id.detail_plot_synopsis_textView);
 
-        Intent intent = getActivity().getIntent();
-
-        if (intent != null && intent.getData() != null) {
-            movieSelectedUri = intent.getData();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            movieSelectedUri = bundle.getParcelable(DETAIL_MOVIE_URI);
             movie_id = MovieContract.MovieEntry.getMovieIdFromUri(movieSelectedUri);
             trailerSelectedUri = MovieContract.TrailerEntry.buildTrailerWithMovieId(movie_id);
             reviewSelectedUri = MovieContract.ReviewEntry.buildReviewWithMovieId(movie_id);
         }
-
 
         mTrailerAdapter = new TrailerAdapter(
                 getActivity(),

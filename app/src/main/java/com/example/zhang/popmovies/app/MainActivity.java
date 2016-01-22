@@ -1,12 +1,13 @@
 package com.example.zhang.popmovies.app;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PreviewFragment.CallBack{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -22,12 +23,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mSortMethod = Utility.getPreferredSortMethod(this);
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_main, new PreviewFragment(), PREVIEW_FRAGMENT_TAG)
-                    .commit();
-        }
 
         if (findViewById(R.id.detail_movie_container) != null) {
             mTwoPane = true;
@@ -72,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         String sortMethod = Utility.getPreferredSortMethod(this);
         if (sortMethod != null && sortMethod != mSortMethod) {
             PreviewFragment previewFragment = (PreviewFragment) getSupportFragmentManager()
-                    .findFragmentByTag(PREVIEW_FRAGMENT_TAG);
+                    .findFragmentById(R.id.fragment_main);
             if (previewFragment != null) {
                 previewFragment.onSortMethodChange();
             }
@@ -82,5 +77,24 @@ public class MainActivity extends AppCompatActivity {
         MovieDetailActivityFragment movieDetailActivityFragment
                 = (MovieDetailActivityFragment) getSupportFragmentManager()
                 .findFragmentByTag(DETAIL_FRAGMENT_TAG);
+    }
+
+    @Override
+    public void onItemSelected(Uri movieUri) {
+
+        if (mTwoPane) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(MovieDetailActivityFragment.DETAIL_MOVIE_URI, movieUri);
+
+            MovieDetailActivityFragment movieDetailActivityFragment
+                    = new MovieDetailActivityFragment();
+            movieDetailActivityFragment.setArguments(bundle);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.detail_movie_container, movieDetailActivityFragment).commit();
+        } else {
+            Intent intent = new Intent(this, MovieDetailActivity.class).setData(movieUri);
+            startActivity(intent);
+        }
     }
 }

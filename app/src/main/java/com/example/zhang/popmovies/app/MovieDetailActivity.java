@@ -13,8 +13,14 @@ public class MovieDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
 
         if (savedInstanceState == null) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(MovieDetailActivityFragment.DETAIL_MOVIE_URI, getIntent().getData());
+
+            MovieDetailActivityFragment movieDetailActivityFragment = new MovieDetailActivityFragment();
+            movieDetailActivityFragment.setArguments(bundle);
+
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.detail_movie_container, new MovieDetailActivityFragment())
+                    .add(R.id.detail_movie_container, movieDetailActivityFragment)
                     .commit();
         }
     }

@@ -1,7 +1,7 @@
 package com.example.zhang.popmovies.app;
 
-import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -54,6 +54,10 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     public PreviewFragment() {
     }
 
+    public interface CallBack {
+        public void onItemSelected(Uri movieUri);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,14 +101,12 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                         if (cursor != null) {
-                            Intent intent = new Intent(getActivity(),MovieDetailActivity.class);
-                            intent.setData(MovieContract.MovieEntry.buildMovieWithMovieId(
-                                    cursor.getLong(COL_MOVIE_MOVIE_ID)
-                            ));
 
                             long movie_id = cursor.getLong(COL_MOVIE_MOVIE_ID);
                             new FetchTrailerAndReviewTask(getActivity()).execute(Long.toString(movie_id));
-                            startActivity(intent);
+                            ((CallBack) getActivity()).onItemSelected(MovieContract
+                                    .MovieEntry.buildMovieWithMovieId(movie_id));
+
                         }
                     }
                 }
