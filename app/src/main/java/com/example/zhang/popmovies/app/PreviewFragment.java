@@ -27,7 +27,12 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
 
     private static final int FETCH_PREVIEW_MOVIE_LOADER_ID = 0;
     private PreviewAdapter mPreviewAdapter;
-    private GridView gridView;
+    private GridView mPreviewGridView;
+
+    // indicate the position of gridview
+    private int mPosition = GridView.INVALID_POSITION;
+    // key to find mPosition in savedInstanceState
+    private static final String SELECTED_KEY = "selected_position";
 
     public static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry._ID,   //necessary for CursorAdapter
@@ -92,13 +97,19 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
                 0
         );
 
-        gridView = (GridView) rootView.findViewById(R.id.gridView_preview);
-        gridView.setAdapter(mPreviewAdapter);
+        mPreviewGridView = (GridView) rootView.findViewById(R.id.gridView_preview);
+        mPreviewGridView.setAdapter(mPreviewAdapter);
 
-        gridView.setOnItemClickListener(
+        // if one item is clicked before get the position.
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
+
+        mPreviewGridView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        mPosition = position;
                         Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                         if (cursor != null) {
 
@@ -119,6 +130,15 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(FETCH_PREVIEW_MOVIE_LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        if (mPosition != GridView.INVALID_POSITION) {
+            outState.putInt(SELECTED_KEY, mPosition);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     void onSortMethodChange() {
@@ -164,6 +184,11 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mPreviewAdapter.swapCursor(cursor);
+
+        if (mPosition != GridView.INVALID_POSITION) {
+
+            mPreviewGridView.setSelection(mPosition);
+        }
     }
 
     @Override
