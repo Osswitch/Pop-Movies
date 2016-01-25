@@ -10,14 +10,14 @@
     <!--Sort order settings strings-->
     <string name="pref_sort_title">Sort Order</string>
     <string name="pref_sort_key">sort order</string>
-    
+
     <string name="sort_entries_popularity">Popularity</string>
     <string name="sort_entries_highestRate">Highest Rate</string>
     <string name="sort_entries_favourite">My Favourite</string>
     <string name="sort_entryValue_popularity">popularity.desc</string>
     <string name="sort_entryValue_highestRate">vote_average.desc</string>
     <string name="sort_entryValue_favourite">favourite</string>
-    
+
     <string-array name="pref_sort_entries">
         <item>@string/sort_entries_popularity</item>
         <item>@string/sort_entries_highestRate</item>
@@ -37,4 +37,5 @@
 
     <string name="mark_as_favorite">MARK AS FAVORITE</string>
     <string name="unmark_the_movie">UNMAKR THE MOVIE</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>

@@ -33,6 +33,11 @@ public class MainActivity extends AppCompatActivity implements PreviewFragment.C
             }
         } else {
             mTwoPane = false;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment_main, new PreviewFragment(), PREVIEW_FRAGMENT_TAG)
+                        .commit();
+            }
         }
     }
 
