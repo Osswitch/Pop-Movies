@@ -189,6 +189,19 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
 
             mPreviewGridView.setSelection(mPosition);
         }
+
+        if (getActivity().findViewById(R.id.detail_movie_container) != null) {
+            if (mPosition == GridView.INVALID_POSITION) {
+                mPreviewGridView.post(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                mPreviewGridView.performItemClick(null, 0, 0);
+                            }
+                        }
+                );
+            }
+        }
     }
 
     @Override
