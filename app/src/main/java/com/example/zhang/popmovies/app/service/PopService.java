@@ -1,12 +1,13 @@
-package com.example.zhang.popmovies.app;
+package com.example.zhang.popmovies.app.service;
 
+import android.app.IntentService;
 import android.content.ContentValues;
-import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.zhang.popmovies.app.R;
 import com.example.zhang.popmovies.app.data.MovieContract;
 
 import org.json.JSONArray;
@@ -22,17 +23,116 @@ import java.net.URL;
 import java.util.Vector;
 
 /**
- * Created by zhang on 24/11/15.
+ * Created by zhang on 02/02/16.
  */
-public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
-    private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
+public class PopService extends IntentService {
 
-    private final Context mContext;
+    private static final String LOG_TAG = PopService.class.getSimpleName();
+    public static final String SORT_METHOD_EXTRA = "sme";
 
-    public FetchMoviesTask(Context context) {
-        mContext = context;
+    public PopService() {
+        super("PopService");
     }
 
+    @Override
+    protected void onHandleIntent(Intent intent) {
+
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+
+        String movieJSONStr = null;
+
+        String method = "discover";
+
+        String category = "movie";
+
+        String minCountNum = "500";
+
+        String sortMethod = intent.getStringExtra(SORT_METHOD_EXTRA);
+
+        String API_KEY = this.getString(R.string.api_key);
+
+        //Try block fetch JSON data from the cloud
+        try{
+
+            final String FETCH_BASE_URI = "http://api.themoviedb.org/3/";
+            final String SORT_PARAM = "sort_by";
+            final String COUNT_PARAM = "vote_count.gte";
+            final String API_KEY_PARAM = "api_key";
+            Uri uri = null;
+
+            if (sortMethod.equals(this.getString(R.string.sort_entryValue_popularity))) {
+                uri = Uri.parse(FETCH_BASE_URI).buildUpon()
+                        .appendPath(method)
+                        .appendPath(category)
+                        .appendQueryParameter(SORT_PARAM, sortMethod)
+                        .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                        .build();
+            } else {
+
+                // When fetch the highest rated movies, restrict those which
+                // have been voted over 500 times
+                uri = Uri.parse(FETCH_BASE_URI).buildUpon()
+                        .appendPath(method)
+                        .appendPath(category)
+                        .appendQueryParameter(SORT_PARAM, sortMethod)
+                        .appendQueryParameter(COUNT_PARAM, minCountNum)
+                        .appendQueryParameter(API_KEY_PARAM, API_KEY)
+                        .build();
+            }
+
+
+
+            URL url = new URL(uri.toString());
+
+            //Log.v(LOG_TAG, "URL is " + url);
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer buffer = new StringBuffer();
+
+            if (inputStream == null){
+                return;
+            }
+
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String line =null;
+
+            while ((line = reader.readLine()) != null){
+                buffer.append(line + "/");
+            }
+
+            if (buffer.length() == 0){
+                return;
+            }
+
+            movieJSONStr = buffer.toString();
+            getMovieFromJson(movieJSONStr, sortMethod);
+
+        } catch(IOException e) {
+            Log.e(LOG_TAG, "error", e);
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null){
+                urlConnection.disconnect();
+            }
+
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (final IOException e) {
+                    Log.e(LOG_TAG, "Error closing stream", e);
+                }
+            }
+        }
+        return;
+    }
 
     //Get poster uri from json
     private void getMovieFromJson(String movieJSONStr, String sortMethod)
@@ -80,16 +180,16 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
                 movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT,
                         movieObject.getInt(MDB_VOTE_COUNT));
 
-                if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_popularity))) {
+                if (sortMethod.equals(this.getString(R.string.sort_entryValue_popularity))) {
                     movieValues.put(MovieContract.MovieEntry.COLUMN_IS_POPULARITY, 1);
-                } else if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_highestRate))) {
+                } else if (sortMethod.equals(this.getString(R.string.sort_entryValue_highestRate))) {
                     movieValues.put(MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE, 1);
                 }
 
                 contentValuesVector.add(movieValues);
             }
 
-            Cursor cursor = mContext.getContentResolver().query(
+            Cursor cursor = this.getContentResolver().query(
                     MovieContract.MovieEntry.CONTENT_URI,
                     null,
                     null,
@@ -103,7 +203,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
             if (contentValuesVector.size() > 0) {
                 ContentValues[] contentValues = new ContentValues[contentValuesVector.size()];
                 contentValuesVector.toArray(contentValues);
-                mContext.getContentResolver().bulkInsert(
+                this.getContentResolver().bulkInsert(
                         MovieContract.MovieEntry.CONTENT_URI,
                         contentValues);
 
@@ -132,19 +232,19 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
 
                 ContentValues updateValues = new ContentValues();
 
-                if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_popularity))) {
+                if (sortMethod.equals(this.getString(R.string.sort_entryValue_popularity))) {
                     updateValues.put(MovieContract.MovieEntry.COLUMN_IS_POPULARITY, 0);
 
-                    mContext.getContentResolver().update(
+                    this.getContentResolver().update(
                             MovieContract.MovieEntry.CONTENT_URI,
                             updateValues,
                             sSelection,
                             sSelectionArgs
                     );
-                } else if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_highestRate))) {
+                } else if (sortMethod.equals(this.getString(R.string.sort_entryValue_highestRate))) {
                     updateValues.put(MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE, 0);
 
-                    mContext.getContentResolver().update(
+                    this.getContentResolver().update(
                             MovieContract.MovieEntry.CONTENT_URI,
                             updateValues,
                             sSelection,
@@ -154,13 +254,13 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
 
             }
 
-            cursor = mContext.getContentResolver().query(
+            cursor = this.getContentResolver().query(
                     MovieContract.MovieEntry.CONTENT_URI,
                     null,
                     null,
                     null,
                     null
-                    );
+            );
 
             Log.d(LOG_TAG, "Fetch movie task complete. "
                     + (cursor.getCount() - storedMovieNum) + " New Movies Inserted ");
@@ -172,105 +272,4 @@ public class FetchMoviesTask extends AsyncTask<String, Void, Void> {
             e.printStackTrace();
         }
     }
-
-    @Override
-    protected Void doInBackground(String... params) {
-
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
-
-        String movieJSONStr = null;
-
-        String method = "discover";
-
-        String category = "movie";
-
-        String minCountNum = "500";
-
-        String sortMethod = params[0];
-
-        String API_KEY = mContext.getString(R.string.api_key);
-
-        //Try block fetch JSON data from the cloud
-        try{
-
-            final String FETCH_BASE_URI = "http://api.themoviedb.org/3/";
-            final String SORT_PARAM = "sort_by";
-            final String COUNT_PARAM = "vote_count.gte";
-            final String API_KEY_PARAM = "api_key";
-            Uri uri = null;
-
-            if (sortMethod.equals(mContext.getString(R.string.sort_entryValue_popularity))) {
-                uri = Uri.parse(FETCH_BASE_URI).buildUpon()
-                        .appendPath(method)
-                        .appendPath(category)
-                        .appendQueryParameter(SORT_PARAM, sortMethod)
-                        .appendQueryParameter(API_KEY_PARAM, API_KEY)
-                        .build();
-            } else {
-
-                // When fetch the highest rated movies, restrict those which
-                // have been voted over 500 times
-                uri = Uri.parse(FETCH_BASE_URI).buildUpon()
-                        .appendPath(method)
-                        .appendPath(category)
-                        .appendQueryParameter(SORT_PARAM, sortMethod)
-                        .appendQueryParameter(COUNT_PARAM, minCountNum)
-                        .appendQueryParameter(API_KEY_PARAM, API_KEY)
-                        .build();
-            }
-
-
-
-            URL url = new URL(uri.toString());
-
-            //Log.v(LOG_TAG, "URL is " + url);
-
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
-
-            if (inputStream == null){
-                return null;
-            }
-
-            reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line =null;
-
-            while ((line = reader.readLine()) != null){
-                buffer.append(line + "/");
-            }
-
-            if (buffer.length() == 0){
-                return null;
-            }
-
-            movieJSONStr = buffer.toString();
-            getMovieFromJson(movieJSONStr, sortMethod);
-
-        } catch(IOException e) {
-            Log.e(LOG_TAG, "error", e);
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
-        } finally {
-            if (urlConnection != null){
-                urlConnection.disconnect();
-            }
-
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
-                }
-            }
-        }
-        return null;
-    }
-
 }

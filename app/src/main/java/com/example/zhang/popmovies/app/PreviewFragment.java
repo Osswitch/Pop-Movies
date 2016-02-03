@@ -1,5 +1,6 @@
 package com.example.zhang.popmovies.app;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.zhang.popmovies.app.data.MovieContract;
+import com.example.zhang.popmovies.app.service.PopService;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -149,7 +151,9 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     public void updateMovies() {
         //Read sort order method
         String sortMethod = Utility.getPreferredSortMethod(getActivity());
-        new FetchMoviesTask(getActivity()).execute(sortMethod);
+        Intent intent = new Intent(getActivity(), PopService.class);
+        intent.putExtra(PopService.SORT_METHOD_EXTRA, sortMethod);
+        getActivity().startService(intent);
     }
 
     @Override
