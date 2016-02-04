@@ -40,6 +40,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     // key to find mPosition in savedInstanceState
     private static final String SELECTED_KEY = "selected_position";
 
+    // Using to indicate the column of cursor
     public static final String[] MOVIE_COLUMNS = {
             MovieContract.MovieEntry._ID,   //necessary for CursorAdapter
             MovieContract.MovieEntry.COLUMN_MOVIE_ID,
@@ -65,6 +66,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     public PreviewFragment() {
     }
 
+    // interface to perform item selected action
     public interface CallBack {
         public void onItemSelected(Uri movieUri);
     }
@@ -84,6 +86,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
+            // refresh button to refresh the preview movie thumbnails.
             updateMovies();
             return true;
         }
@@ -97,6 +100,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        // initialize the adapter to displaying thumbnail
         mPreviewAdapter = new PreviewAdapter(
                 getActivity(),
                 null,
@@ -106,7 +110,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
         mPreviewGridView = (GridView) rootView.findViewById(R.id.gridView_preview);
         mPreviewGridView.setAdapter(mPreviewAdapter);
 
-        // if one item is clicked before get the position.
+        // if one item is clicked before save the position it is clicked in mPosition.
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
@@ -147,7 +151,8 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
         super.onSaveInstanceState(outState);
     }
 
-    void onSortMethodChange() {
+    // after changing the sort method of preview page, reload the content inside.
+    public void onSortMethodChange() {
         updateMovies();
         getLoaderManager().restartLoader(FETCH_PREVIEW_MOVIE_LOADER_ID, null, this);
     }
@@ -202,11 +207,12 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mPreviewAdapter.swapCursor(cursor);
 
+        // if item is clicked before, jump to the previous clicked position
         if (mPosition != GridView.INVALID_POSITION) {
-
             mPreviewGridView.setSelection(mPosition);
         }
 
+        // in tablet display the detail info of first movie as default
         if (getActivity().findViewById(R.id.detail_movie_container) != null) {
             if (mPosition == GridView.INVALID_POSITION) {
                 mPreviewGridView.post(
