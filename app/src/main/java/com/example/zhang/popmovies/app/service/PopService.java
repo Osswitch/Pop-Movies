@@ -1,7 +1,9 @@
 package com.example.zhang.popmovies.app.service;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -32,6 +34,16 @@ public class PopService extends IntentService {
 
     public PopService() {
         super("PopService");
+    }
+
+    public static class AlarmReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Intent sendIntent = new Intent(context, PopService.class);
+            sendIntent.putExtra(SORT_METHOD_EXTRA, intent.getStringExtra(SORT_METHOD_EXTRA));
+            context.startService(sendIntent);
+        }
     }
 
     @Override

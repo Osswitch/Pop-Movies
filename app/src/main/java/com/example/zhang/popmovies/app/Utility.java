@@ -34,4 +34,17 @@ public class Utility {
         return previewImageUri;
     }
 
+//    public static int getNetworkType(Context context) {
+//        ConnectivityManager connectivityManager = (ConnectivityManager) context
+//                .getSystemService(Context.CONNECTIVITY_SERVICE);
+//
+//        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+//
+//        if (networkInfo != null) {
+//            return networkInfo.getType();
+//        } else {
+//            return -1;
+//        }
+//    }
+
 }
