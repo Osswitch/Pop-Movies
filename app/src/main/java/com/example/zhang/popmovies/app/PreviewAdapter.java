@@ -2,6 +2,7 @@ package com.example.zhang.popmovies.app;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,14 +48,12 @@ public class PreviewAdapter extends CursorAdapter
 
         ViewHolder viewHolder = (ViewHolder) view.getTag(R.string.app_name);
 
-        Picasso.with(context).load(Utility.getPreviewImage(cursor, previewPosterSize)).into(viewHolder.previewView);
-//
-//        int networkType = Utility.getNetworkType(context);
-//
-//        if (networkType == ConnectivityManager.TYPE_WIFI) {
-//
-//        } else {
-//            viewHolder.previewView.setImageResource(R.mipmap.ic_launcher);
-//        }
+        int networkType = Utility.getNetworkType(context);
+
+        if (networkType == ConnectivityManager.TYPE_WIFI) {
+            Picasso.with(context).load(Utility.getPreviewImage(cursor, previewPosterSize)).into(viewHolder.previewView);
+        } else {
+            viewHolder.previewView.setImageResource(R.mipmap.ic_launcher);
+        }
     }
 }

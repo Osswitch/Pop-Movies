@@ -3,6 +3,8 @@ package com.example.zhang.popmovies.app;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
@@ -34,17 +36,17 @@ public class Utility {
         return previewImageUri;
     }
 
-//    public static int getNetworkType(Context context) {
-//        ConnectivityManager connectivityManager = (ConnectivityManager) context
-//                .getSystemService(Context.CONNECTIVITY_SERVICE);
-//
-//        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-//
-//        if (networkInfo != null) {
-//            return networkInfo.getType();
-//        } else {
-//            return -1;
-//        }
-//    }
+    public static int getNetworkType(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if (networkInfo != null) {
+            return networkInfo.getType();
+        } else {
+            return -1;
+        }
+    }
 
 }
