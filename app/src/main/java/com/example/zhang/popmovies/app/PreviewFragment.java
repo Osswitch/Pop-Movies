@@ -1,13 +1,8 @@
 package com.example.zhang.popmovies.app;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -22,7 +17,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.zhang.popmovies.app.data.MovieContract;
-import com.example.zhang.popmovies.app.service.PopService;
+import com.example.zhang.popmovies.app.sync.PopMovieSyncAdapter;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -158,20 +153,21 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     public void updateMovies() {
-        //Read sort order method
-        String sortMethod = Utility.getPreferredSortMethod(getActivity());
-
-        Intent alarmIntent = new Intent(getActivity(), PopService.AlarmReceiver.class);
-        alarmIntent.putExtra(PopService.SORT_METHOD_EXTRA, sortMethod);
-
-        //Wrap in a pending intent which only fires once.
-        PendingIntent pendingIntent = PendingIntent
-                .getBroadcast(getActivity(), 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);//getBroadcast(context, 0, i, 0);
-
-        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-
-        //Set the AlarmManager to wake up the system.
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000, pendingIntent);
+//        //Read sort order method
+//        String sortMethod = Utility.getPreferredSortMethod(getActivity());
+//
+//        Intent alarmIntent = new Intent(getActivity(), PopService.AlarmReceiver.class);
+//        alarmIntent.putExtra(PopService.SORT_METHOD_EXTRA, sortMethod);
+//
+//        //Wrap in a pending intent which only fires once.
+//        PendingIntent pendingIntent = PendingIntent
+//                .getBroadcast(getActivity(), 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);//getBroadcast(context, 0, i, 0);
+//
+//        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+//
+//        //Set the AlarmManager to wake up the system.
+//        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000, pendingIntent);
+        PopMovieSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
