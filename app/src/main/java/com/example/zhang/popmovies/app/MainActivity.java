@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.zhang.popmovies.app.sync.PopMovieSyncAdapter;
+
 public class MainActivity extends AppCompatActivity implements PreviewFragment.CallBack{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -39,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements PreviewFragment.C
                         .commit();
             }
         }
+
+        PopMovieSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override
