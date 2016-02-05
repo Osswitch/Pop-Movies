@@ -153,20 +153,7 @@ public class PreviewFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     public void updateMovies() {
-//        //Read sort order method
-//        String sortMethod = Utility.getPreferredSortMethod(getActivity());
-//
-//        Intent alarmIntent = new Intent(getActivity(), PopService.AlarmReceiver.class);
-//        alarmIntent.putExtra(PopService.SORT_METHOD_EXTRA, sortMethod);
-//
-//        //Wrap in a pending intent which only fires once.
-//        PendingIntent pendingIntent = PendingIntent
-//                .getBroadcast(getActivity(), 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);//getBroadcast(context, 0, i, 0);
-//
-//        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-//
-//        //Set the AlarmManager to wake up the system.
-//        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000, pendingIntent);
+
         PopMovieSyncAdapter.syncImmediately(getActivity());
     }
 
