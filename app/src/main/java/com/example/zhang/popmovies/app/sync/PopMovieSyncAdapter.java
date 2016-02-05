@@ -408,72 +408,79 @@ public class PopMovieSyncAdapter extends AbstractThreadedSyncAdapter {
         Context context = getContext();
         // checking the last update and notify if it's the first of the day
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String lastNotificationKey = context.getString(R.string.pref_last_notification);
-        long lastSync = preferences.getLong(lastNotificationKey, 0);
 
-        if (System.currentTimeMillis() - lastSync >= SEVEN_DAYS_IN_MILLIS) {
-            // last sync is more than 7 days
-            String sortMethod = Utility.getPreferredSortMethod(context);
-            String sPreviewSelection = null;
-            String sortOrder = null;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String displayNotificationsKey = context.getString(R.string.pref_enable_notifications_key);
+        boolean displayNotifications = prefs.getBoolean(displayNotificationsKey,
+                Boolean.parseBoolean(context.getString(R.string.pref_enable_notifications_default)));
 
-            if (sortMethod.equals(context.getString(R.string.sort_entryValue_popularity))) {
-                sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_POPULARITY + "=?";
-                sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
-            } else if (sortMethod.equals(context.getString(R.string.sort_entryValue_highestRate))) {
-                sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + "=?";
-                sortOrder = MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " DESC";
-            } else if (sortMethod.equals(context.getString(R.string.sort_entryValue_favourite))) {
-                sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_FAVOURITE + "=?";
-            }
+        if ( displayNotifications ) {
+            String lastNotificationKey = context.getString(R.string.pref_last_notification);
+            long lastSync = preferences.getLong(lastNotificationKey, 0);
+            if (System.currentTimeMillis() - lastSync >= SEVEN_DAYS_IN_MILLIS) {
+                // last sync is more than 7 days
+                String sortMethod = Utility.getPreferredSortMethod(context);
+                String sPreviewSelection = null;
+                String sortOrder = null;
 
-            Cursor cursor = context.getContentResolver().query(
-                    MovieContract.MovieEntry.CONTENT_URI,
-                    NOTIFY_PREVIEW_PROJECTION,
-                    sPreviewSelection,
-                    new String[]{"1"},
-                    sortOrder
-            );
+                if (sortMethod.equals(context.getString(R.string.sort_entryValue_popularity))) {
+                    sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_POPULARITY + "=?";
+                    sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
+                } else if (sortMethod.equals(context.getString(R.string.sort_entryValue_highestRate))) {
+                    sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_HIGHEST_RATE + "=?";
+                    sortOrder = MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " DESC";
+                } else if (sortMethod.equals(context.getString(R.string.sort_entryValue_favourite))) {
+                    sPreviewSelection = MovieContract.MovieEntry.COLUMN_IS_FAVOURITE + "=?";
+                }
 
-            if (cursor.moveToFirst()) {
-                String originalTitle = cursor.getString(COL_MOVIE_ORIGINAL_TITLE);
-                String contentText = String.format(
-                        context.getString(R.string.format_notification),
-                        originalTitle
+                Cursor cursor = context.getContentResolver().query(
+                        MovieContract.MovieEntry.CONTENT_URI,
+                        NOTIFY_PREVIEW_PROJECTION,
+                        sPreviewSelection,
+                        new String[]{"1"},
+                        sortOrder
                 );
 
-                // NotificationCompatBuilder is a very convenient way to build backward-compatible
-                // notifications.  Just throw in some data.
-                NotificationCompat.Builder mBuilder =
-                        new NotificationCompat.Builder(getContext())
-                                .setContentTitle(originalTitle);
+                if (cursor.moveToFirst()) {
+                    String originalTitle = cursor.getString(COL_MOVIE_ORIGINAL_TITLE);
+                    String contentText = String.format(
+                            context.getString(R.string.format_notification),
+                            originalTitle
+                    );
 
-                // Make something interesting happen when the user clicks on the notification.
-                // In this case, opening the app is sufficient.
-                Intent resultIntent = new Intent(context, MainActivity.class);
+                    // NotificationCompatBuilder is a very convenient way to build backward-compatible
+                    // notifications.  Just throw in some data.
+                    NotificationCompat.Builder mBuilder =
+                            new NotificationCompat.Builder(getContext())
+                                    .setContentTitle(originalTitle);
 
-                // The stack builder object will contain an artificial back stack for the
-                // started Activity.
-                // This ensures that navigating backward from the Activity leads out of
-                // your application to the Home screen.
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-                stackBuilder.addNextIntent(resultIntent);
-                PendingIntent resultPendingIntent =
-                        stackBuilder.getPendingIntent(
-                                0,
-                                PendingIntent.FLAG_UPDATE_CURRENT
-                        );
-                mBuilder.setContentIntent(resultPendingIntent);
+                    // Make something interesting happen when the user clicks on the notification.
+                    // In this case, opening the app is sufficient.
+                    Intent resultIntent = new Intent(context, MainActivity.class);
 
-                NotificationManager mNotificationManager =
-                        (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                // MOVIE_NOTIFICATION_ID allows you to update the notification later on.
-                mNotificationManager.notify(MOVIE_NOTIFICATION_ID, mBuilder.build());
-                
-                //refreshing last sync
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putLong(lastNotificationKey, System.currentTimeMillis());
-                editor.commit();
+                    // The stack builder object will contain an artificial back stack for the
+                    // started Activity.
+                    // This ensures that navigating backward from the Activity leads out of
+                    // your application to the Home screen.
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                    stackBuilder.addNextIntent(resultIntent);
+                    PendingIntent resultPendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+                    mBuilder.setContentIntent(resultPendingIntent);
+
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    // MOVIE_NOTIFICATION_ID allows you to update the notification later on.
+                    mNotificationManager.notify(MOVIE_NOTIFICATION_ID, mBuilder.build());
+
+                    //refreshing last sync
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putLong(lastNotificationKey, System.currentTimeMillis());
+                    editor.commit();
+                }
             }
 
         }
